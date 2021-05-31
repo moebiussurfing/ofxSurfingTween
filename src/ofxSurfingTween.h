@@ -142,7 +142,6 @@ private:
 	void setup();
 	void startup();
 	void setupPlots();
-	void updateGenerators();
 	void updateSmooths();
 	void updateEngine();
 	void drawPlots(ofRectangle r);
@@ -233,7 +232,7 @@ private:
 	ofParameter<bool> bNormalized;
 	ofParameter<float> minOutput;
 	ofParameter<float> maxOutput;
-	ofParameter<bool> enableSmooth;
+	ofParameter<bool> enableTween;
 	ofParameter<float> smoothPower;
 	ofParameter<float> threshold;
 	ofParameter<float> onsetGrow;
