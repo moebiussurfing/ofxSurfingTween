@@ -9,10 +9,11 @@
 
 ## can exclude some sttings files
 
-#*.XML
-#*.xml
-#*.JSON
-#*.json
+*.XML
+*.xml
+*.JSON
+*.json
+*.ini
 
 #*/bin/*
 #!*/bin/data/
