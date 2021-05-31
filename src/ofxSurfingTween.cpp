@@ -877,14 +877,13 @@ void ofxSurfingTween::draw_ImGui()
 
 					//TODO:
 					//blink by timer
-					//tn
 					bool b = bPlay;
 					float a;
 					if (b) a = 1 - tn;
 					//if (b) a = ofxSurfingHelpers::getFadeBlink();
 					else a = 1.0f;
 					if (b) ImGui::PushStyleColor(ImGuiCol_Border, (ImVec4)ImColor::HSV(0.5f, 0.0f, 1.0f, 0.5 * a));
-					ofxSurfingHelpers::AddBigToggle(bPlay, _w100, _h, false);
+					ofxSurfingHelpers::AddBigToggle(bPlay, _w100, _h/2, false);
 					if (b) ImGui::PopStyleColor();
 					if (bPlay) {
 						//ImGui::SliderFloat("Speed", &playSpeed, 0, 1);
@@ -998,12 +997,12 @@ void ofxSurfingTween::draw_ImGui()
 
 				//-
 
-				if (enableTween) {
-					if (ImGui::CollapsingHeader("EXTRA"))
-					{
-						if (enableTween){}
+				if (enableTween) 
+				{
+					//if (ImGui::CollapsingHeader("EXTRA"))
+					//{
 
-							bool bOpen = false;
+						bool bOpen = false;
 						ImGuiTreeNodeFlags _flagt = (bOpen ? ImGuiTreeNodeFlags_DefaultOpen : ImGuiTreeNodeFlags_None);
 
 
@@ -1036,7 +1035,7 @@ void ofxSurfingTween::draw_ImGui()
 							//ImGui::Dummy(ImVec2(0.0f, 2.0f));
 							ImGui::Dummy(ImVec2(0.0f, 2.0f));
 						}
-					}
+					//}
 
 					//--
 
