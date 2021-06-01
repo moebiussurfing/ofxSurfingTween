@@ -9,9 +9,7 @@ TODO:
 
 + independent settings for each param.. ?
 + "real" nested sub-groups tree levels.. ?
-+ add thresholds/onSet independent for each variable/channel: make it functional. add callbacks..
 + add param to calibrate max history smooth/speed..
-+ fix broke-continuity/state when tweak smooth power "on playing"..
 + plotting int type should be stepped/not continuous..
 
 */
@@ -19,7 +17,6 @@ TODO:
 
 #include "ofMain.h"
 
-//#include "ofxDataStream.h"
 #include "FloatAnimator.h"
 
 #include "ofxHistoryPlot.h"
@@ -31,8 +28,6 @@ TODO:
 #include "ofxSurfing_ImGuiBundle.h"
 #include "ofxInteractiveRect.h"
 
-#define NUM_GENERATORS 6
-
 #define COLORS_MONCHROME // vs iterated hue
 
 //----
@@ -41,22 +36,22 @@ class myTweenerClass
 {
 private:
 	float value;
-	//float controlPercent;
-
 public:
 	float from;
 	float to;
-	float getValue() { return value; }
+	float getValue() { 
+		//value = ofMap(percent, 0, 1, from, to);
+		return value; 
+	}
 
 	void update(float percent) {
-		//controlPercent = percent;
 		value = ofMap(percent, 0, 1, from, to);
 	}
 };
 
 //----
 
-class ofxSurfingTween : public ofBaseApp {
+class ofxSurfingTween /*: public ofBaseApp*/ {
 
 public:
 	ofxSurfingTween();
@@ -89,20 +84,12 @@ public:
 	void draw(ofEventArgs & args);
 	void exit();
 	void keyPressed(int key);
-	//void keyReleased(int key);
-	//void mouseMoved(int x, int y);
-	//void mouseDragged(int x, int y, int button);
-	//void mousePressed(int x, int y, int button);
-	//void mouseReleased(int x, int y, int button);
-	//void mouseEntered(int x, int y);
-	//void mouseExited(int x, int y);
-	//void windowResized(int w, int h);
-	//void gotMessage(ofMessage msg);
-	//void dragEvent(ofDragInfo dragInfo);
 
 	//---
 
-	// api initializers
+	// api 
+	// initializers
+
 public:
 	void setup(ofParameterGroup& aparams);//main setup method. to all pass the params with one line
 
@@ -114,7 +101,11 @@ public:
 
 	//void addGroupSmooth_ImGuiWidgets(ofParameterGroup &group);//monitor preview: to populate the widgets inside an ImGui begin/end
 
-	// api getters
+	//-
+
+	// api 
+	// getters
+
 public:
 	//--------------------------------------------------------------
 	ofParameterGroup& getParamsSmoothed() {
@@ -133,7 +124,7 @@ public:
 
 public:
 	void doGo();
-	void doRandomize();//do and set random in min/max range for all params
+	void doRandomize(bool bGo = false);//do and set random in min/max range for all params
 	//void doRandomize(int index, bool bForce);//do random in min/max range for a param. bForce ignores enabler
 
 	//---
@@ -148,29 +139,6 @@ private:
 
 	//----
 
-	//private:
-	//	enum ParamType {
-	//		PTYPE_FLOAT = 0,
-	//		PTYPE_INT,
-	//		PTYPE_BOOL,
-	//		PTYPE_UNKNOWN
-	//	};
-	//
-	//private:
-	//	class MidiParamAssoc {
-	//	public:
-	//		//int midiId = -1;
-	//		int paramIndex = 0;
-	//		ParamType ptype = PTYPE_UNKNOWN;
-	//		//ofRectangle drawRect;
-	//		string displayMidiName = "";
-	//		//bool bListening = false;
-	//		//bool bNeedsTextPrompt = false;
-	//		string xmlParentName = "";
-	//		string xmlName = "";
-	//	}; 
-	//vector< shared_ptr<MidiParamAssoc> > mAssocParams;
-
 private:
 	ofParameterGroup mParamsGroup;
 
@@ -183,10 +151,9 @@ private:
 private:
 	FloatAnimator animator;
 
-	//vector<float> outputs;//the smooth class
+	vector<myTweenerClass> outputs;
+	//vector<float> outputs;
 	//vector<FloatAnimator> outputs;//the smooth class
-	vector<myTweenerClass> outputs;//the smooth class
-	//vector<ofxDataStream> outputs;//the smooth class
 
 	vector<float> inputs;//feed normnalized signals here
 	vector<float> generators;//testing signals
@@ -202,11 +169,11 @@ private:
 	vector<ofxHistoryPlot *> plots;
 	vector<ofColor> colors;
 
+	ofColor colorSelected;
+	ofColor colorBaseLine;
 #ifdef COLORS_MONCHROME
 	ofColor colorPlots;
 #endif
-	ofColor colorSelected;
-	ofColor colorBaseLine;
 
 private:
 	void Changed_Params(ofAbstractParameter &e);
@@ -219,31 +186,31 @@ private:
 	ofParameter<bool> bShowInputs;
 	ofParameter<bool> bShowOutputs;
 	ofParameter<bool> bShowHelp;
-	ofParameter<bool> bUseGenerators;
 	ofParameter<bool> solo;
 	ofParameter<int> index;
-	ofParameter<int> typeSmooth;
-	ofParameter<string> typeSmooth_Str;
-	ofParameter<int> typeMean;
-	ofParameter<string> typeMean_Str;
-	ofParameter<bool> bClamp;
-	ofParameter<float> minInput;
-	ofParameter<float> maxInput;
-	ofParameter<bool> bNormalized;
-	ofParameter<float> minOutput;
-	ofParameter<float> maxOutput;
 	ofParameter<bool> enableTween;
-	ofParameter<float> smoothPower;
-	ofParameter<float> threshold;
-	ofParameter<float> onsetGrow;
-	ofParameter<float> onsetDecay;
-	ofParameter<float> slideMin;
-	ofParameter<float> slideMax;
 	ofParameter<float> input;//index selected
 	ofParameter<float> output;
 	ofParameter<bool> bReset;
 	ofParameter<bool> bPlay;
 	ofParameter<float> playSpeed;
+	//ofParameter<bool> bUseGenerators;
+	//ofParameter<int> typeSmooth;
+	//ofParameter<string> typeSmooth_Str;
+	//ofParameter<int> typeMean;
+	//ofParameter<string> typeMean_Str;
+	//ofParameter<bool> bClamp;
+	//ofParameter<float> minInput;
+	//ofParameter<float> maxInput;
+	//ofParameter<bool> bNormalized;
+	//ofParameter<float> minOutput;
+	//ofParameter<float> maxOutput;
+	//ofParameter<float> smoothPower;
+	//ofParameter<float> threshold;
+	//ofParameter<float> onsetGrow;
+	//ofParameter<float> onsetDecay;
+	//ofParameter<float> slideMin;
+	//ofParameter<float> slideMax;
 
 	//tester timers
 	int tf;
@@ -255,7 +222,7 @@ private:
 	bool bTrigManual = false;//flip first
 	bool bModeFast = false;//fast generators
 
-	ofColor colorBg;
+	//--
 
 	void setup_ImGui();
 	bool bAutoDraw = true;
@@ -266,25 +233,16 @@ private:
 	ofParameter<bool> auto_resize{ "Auto Resize", true };
 	ofParameter<bool> bLockMouseByImGui{ "Mouse Locked", false };
 	ofParameter<bool> auto_lockToBorder{ "Lock GUI", false };
+	
+	//--
+
 public:
 	ofParameter<bool> bGui{ "SURFING TWEENER", true };
 
 private:
-	std::vector<std::string> typeSmoothLabels;
-	std::vector<std::string> typeMeanLabels;
-
-	//	//--------------------------------------------------------------
-	//	void nextTypeSmooth() {
-	//		if (typeSmooth >= typeSmooth.getMax()) typeSmooth = 1;
-	//		else typeSmooth++;
-	//	}
-	//	//--------------------------------------------------------------
-	//	void nextTypeMean() {
-	//		if (typeMean >= typeMean.getMax()) typeMean = 0;
-	//		else typeMean++;
-	//	}
-
 	string helpInfo;
+	ofTrueTypeFont font;
+
 public:
 	std::string getHelpInfo() {
 		return helpInfo;
