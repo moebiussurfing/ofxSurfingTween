@@ -54,11 +54,10 @@ void ofApp::update() {
 	NOTE:
 	learn how to access the tweened parameters.
 	notice that we can't overwrite the tween on the source parameters!
-	we can get the tweened params/variables doing these different approaches:
 	
 	*/
 
-	// 0. simple getters
+	// simple getters
 
 	// slowdown log a bit
 	static bool bDebug = true;
@@ -69,7 +68,7 @@ void ofApp::update() {
 		int _size = dataTween.get(size);
 		int _amount = dataTween.get(amount);
 
-		//log
+		// log
 		string sp = "  \t  ";
 		string str = "TWEENED >" + sp;
 		str += lineWidth.getName() + ":" + ofToString(_lineWidth, 2); str += sp;
@@ -78,66 +77,6 @@ void ofApp::update() {
 		str += amount.getName() + ":" + ofToString(_amount); str += sp;
 		ofLogNotice(__FUNCTION__) << str;
 	}
-
-	/*
-
-	// more snippets for inspiration:
-
-	// 1. just the param values
-	int _shapeType = dataTween.getParamIntValue(shapeType);
-	int _amount = dataTween.getParamIntValue(amount);
-	float _speed = dataTween.getParamFloatValue(speed);
-
-	// 2. the parameter itself
-	ofParameter<int> _amount = dataTween.getParamInt(amount.getName());
-	ofParameter<float> _lineWidth = dataTween.getParamFloat(lineWidth.getName());
-	ofParameter<float> _separation = dataTween.getParamFloat(separation.getName());
-
-	// 4. the ofAbstractParameter
-	// to be casted to his correct type after
-	auto &ap = dataTween.getParamAbstract(lineWidth);
-	{
-		auto type = ap.type();
-		bool isGroup = type == typeid(ofParameterGroup).name();
-		bool isFloat = type == typeid(ofParameter<float>).name();
-		bool isInt = type == typeid(ofParameter<int>).name();
-		bool isBool = type == typeid(ofParameter<bool>).name();
-		string str = ap.getName();
-		if (isFloat)
-		{
-			ofParameter<float> fp = ap.cast<float>();
-		}
-		else if (isInt)
-		{
-			ofParameter<int> ip = ap.cast<int>();
-		}
-	}
-
-	// 4. the whole group
-	// requires more work after, like iterate the group content, get a param by name...etc.
-	auto &group = dataTween.getParamsSmoothed();
-	for (int i = 0; i < group.size(); i++)
-	{
-		auto type = group[i].type();
-		bool isGroup = type == typeid(ofParameterGroup).name();
-		bool isFloat = type == typeid(ofParameter<float>).name();
-		bool isInt = type == typeid(ofParameter<int>).name();
-		bool isBool = type == typeid(ofParameter<bool>).name();
-		string str = group[i].getName();
-		if (isFloat)
-		{
-			ofParameter<float> fp = group[i].cast<float>();
-			//do something with this parameter
-			//like push_back to your vector or something
-		}
-		else if (isInt)
-		{
-			ofParameter<int> ip = group[i].cast<int>();
-			//do something with this parameter
-			//like push_back to your vector or something
-		}
-	}
-	*/
 }
 
 //--------------------------------------------------------------

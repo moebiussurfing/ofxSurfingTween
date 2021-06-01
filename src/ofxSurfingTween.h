@@ -110,14 +110,16 @@ public:
 	}
 
 public:
+	//simple getters
 	float get(ofParameter<float> &e);
 	int get(ofParameter<int> &e);
-	float getParamFloatValue(ofAbstractParameter &e);
-	int getParamIntValue(ofAbstractParameter &e);
-	ofAbstractParameter& getParamAbstract(ofAbstractParameter &e);
-	ofAbstractParameter& getParamAbstract(string name);
-	ofParameter<float>& getParamFloat(string name);
-	ofParameter<int>& getParamInt(string name);
+	//complex getters
+	//float getParamFloatValue(ofAbstractParameter &e);
+	//int getParamIntValue(ofAbstractParameter &e);
+	//ofAbstractParameter& getParamAbstract(ofAbstractParameter &e);
+	//ofAbstractParameter& getParamAbstract(string name);
+	//ofParameter<float>& getParamFloat(string name);
+	//ofParameter<int>& getParamInt(string name);
 
 public:
 	void doGo();

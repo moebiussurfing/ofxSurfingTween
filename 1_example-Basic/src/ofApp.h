@@ -1,8 +1,10 @@
 #pragma once
+
 #include "ofMain.h"
 
 #include "ofxSurfingTween.h"
-#include "ofxGui.h"
+
+#include "ofxGui.h"//only to local gui
 #include "ofxSurfing_ofxGui.h"//only to set theme
 #include "ofxWindowApp.h"//only to handle window
 

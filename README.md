@@ -62,9 +62,6 @@ void ofApp::update()
     float _speed = dataTween.get(speed);
     int _amount = dataTween.get(amount);
     int _shapeType = dataTween.get(shapeType);
-
-    // We can get the tweened/target params using other approaches.
-    // Look on the example-Basic for more helping snippets 
 }
 ```
 

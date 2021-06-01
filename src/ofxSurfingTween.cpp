@@ -157,6 +157,8 @@ void ofxSurfingTween::update(ofEventArgs & args) {
 	updateSmooths();
 	updateEngine();
 
+	//-
+
 	// tester
 	// play timed randoms
 	static const int _secs = 2;
@@ -367,19 +369,7 @@ void ofxSurfingTween::doRandomize(bool bGo) {
 
 			v = ofMap(pr.get(), pr.getMin(), pr.getMax(), 0, 1, true);
 		}
-
-		//-
-
-		//if (bGo)
-		//{
-		//	float vcurr = outputs[i].getValue();
-		//	outputs[i].from = vcurr;
-		//	outputs[i].to = v;
-		//	updateSmooths();
-		//}
 	}
-
-	//if (bGo) animator.start();
 
 	//---
 
@@ -518,13 +508,13 @@ void ofxSurfingTween::drawPlots(ofRectangle r) {
 		float _a1 = ofxSurfingHelpers::Bounce(1.0);
 		float _a2 = ofxSurfingHelpers::Bounce(0.5);
 
-		////mark selected left line
-		//if (i == index && !solo)
-		//{
-		//	ofSetLineWidth(1);
-		//	ofSetColor(colorSelected);
-		//	ofLine(x, y, x, y + h);
-		//}
+		//mark selected left line
+		if (i == index && !solo)
+		{
+			ofSetLineWidth(1);
+			ofSetColor(colorSelected);
+			ofLine(x, y, x, y + h);
+		}
 
 		if (!solo) y += h;
 	}
@@ -555,10 +545,10 @@ void ofxSurfingTween::keyPressed(int key) {
 	}
 
 	if (key == '-') {
-		animator.previousCurve(false);
+		animator.previousCurve(true);
 	}
 	if (key == '+') {
-		animator.nextCurve(false);
+		animator.nextCurve(true);
 	}
 }
 
@@ -666,6 +656,8 @@ void ofxSurfingTween::doReset() {
 	//maxOutput = 1;
 	//bNormalized = false;
 	//bClamp = true;
+
+	animator.doReset();
 }
 
 // callback for a parameter group
@@ -833,7 +825,9 @@ void ofxSurfingTween::draw_ImGui()
 						ofxSurfingHelpers::refreshImGui_WidgetsSizes(_spcx, _spcy, _w100, _h100, _w99, _w50, _w33, _w25, _h);
 
 						//ImGui::Text("Panels:");
+						ImGui::PushID(1);
 						ofxSurfingHelpers::AddBigToggle(animator.SHOW_Gui, _w100, _h50);
+						ImGui::PopID();
 
 						ofxSurfingHelpers::AddBigToggle(bShowInputs, _w50, _h50); ImGui::SameLine();
 						ofxSurfingHelpers::AddBigToggle(bShowOutputs, _w50, _h50);
@@ -841,24 +835,13 @@ void ofxSurfingTween::draw_ImGui()
 						ofxSurfingHelpers::AddBigToggle(bShowPlots, _w50, _h50); ImGui::SameLine();
 						ofxSurfingHelpers::AddBigToggle(bFullScreen, _w50, _h50);
 
-						//float __w =_w100 - (_spcx/2);
-						//ofxSurfingHelpers::AddBigToggle(bShowPlots, _w100 * 0.6 - (_spcx / 2), _h50); ImGui::SameLine();
-						//ofxSurfingHelpers::AddBigToggle(bFullScreen, _w100 * 0.4 - (_spcx / 2), _h50);
 						ImGui::Unindent();
 					}
-
-					//ImGui::Dummy(ImVec2(0.0f, 2.0f));
-
-					//ofxImGui::AddGroup(params, mainSettings);// group
-
-					//ofxSurfingHelpers::AddBigToggle(enable, _w100, _h);//TODO:
 
 					//----
 
 					// enable toggles
 
-					//bool bOpen;
-					//ImGuiWindowFlags _flagw;
 					bOpen = false;
 					_flagw = (bOpen ? ImGuiWindowFlags_NoCollapse : ImGuiWindowFlags_None);
 
@@ -901,41 +884,30 @@ void ofxSurfingTween::draw_ImGui()
 					}
 					//ImGui::Dummy(ImVec2(0.0f, 5.0f));
 
-				//-
-
-					//if (ImGui::CollapsingHeader("EXTRA"))
-					//{
+					//-
 
 					bOpen = false;
 					ImGuiTreeNodeFlags _flagt = (bOpen ? ImGuiTreeNodeFlags_DefaultOpen : ImGuiTreeNodeFlags_None);
 
-
+					//TODO:
 					//plots
 					//ofxSurfingHelpers::AddPlot(input);
 					//ofxSurfingHelpers::AddPlot(output);
 
-					/*
-					//ImGui::PushItemWidth(-100);
-					//ofxImGui::AddParameter(_param);
-					//ImGui::PopItemWidth();
-					//if (ImGui::Button("_Button", ImVec2(_w100, _h / 2))) {}
-					//ofxSurfingHelpers::AddBigToggle(_param, _w100, _h);
-					//ImGui::PushButtonRepeat(true);
-					//float __w = ofxSurfingHelpers::getImGui_WidgetWidth(w, 2);
-					//if (ImGui::Button("<", ImVec2(__w, _h))) {} ImGui::SameLine();
-					//if (ImGui::Button(">", ImVec2(__w, _h))) {}
-					//ImGui::PopButtonRepeat();
-					*/
-
 					if (ImGui::CollapsingHeader("MONITOR", _flagt))
 					{
 						ofxSurfingHelpers::refreshImGui_WidgetsSizes(_spcx, _spcy, _w100, _h100, _w99, _w50, _w33, _w25, _h);
+						
+						ofxSurfingHelpers::AddBigToggle(solo, _w100, _h50);
 
-						//ofxImGui::AddParameter(index);
+						auto &_p = params_EditorEnablers[index];// ofAbstractParameter
+						string name = _p.getName();
+						ImGui::Text(name.c_str());
+
 						if (ofxImGui::AddStepper(index)) {
 							index = ofClamp(index, index.getMin(), index.getMax());
 						}
-						ofxSurfingHelpers::AddBigToggle(solo, _w100, _h50);
+						ofxImGui::AddParameter(index);
 						ofxImGui::AddParameter(input);
 						ofxImGui::AddParameter(output);
 						//ImGui::Dummy(ImVec2(0.0f, 2.0f));
@@ -956,14 +928,12 @@ void ofxSurfingTween::draw_ImGui()
 					{
 						//ofxSurfingHelpers::refreshImGui_WidgetsSizes(_spcx, _spcy, _w100, _h100, _w99, _w50, _w33, _w25, _h);
 
-						//ofxSurfingHelpers::AddBigToggle(bUseGenerators, _w100, _h50);
 						ofxImGui::AddParameter(bShowHelp);
 						ofxImGui::AddParameter(rectangle_PlotsBg.bEditMode);
 						ImGui::Dummy(ImVec2(0.0f, 2.0f));
 
 						ofxImGui::AddParameter(auto_resize);
 						ofxImGui::AddParameter(bLockMouseByImGui);
-						//ofxImGui::AddParameter(auto_lockToBorder);
 					}
 				}
 			}
@@ -994,7 +964,6 @@ void ofxSurfingTween::draw_ImGui()
 			if (bShowOutputs)
 			{
 				name = "TWEENED";
-				//name = "TWEENED PARAMS";
 				if (ofxImGui::BeginWindow(name.c_str(), mainSettings, flagsw))
 				{
 					//ofxSurfingHelpers::refreshImGui_WidgetsSizes(_spcx, _spcy, _w100, _h100, _w99, _w50, _w33, _w25, _h);
@@ -1101,42 +1070,6 @@ void ofxSurfingTween::addParam(ofAbstractParameter& aparam) {
 	//-
 
 	params.add(params_EditorEnablers);
-
-
-	//auto mac = make_shared<ofxSurfingTween::MidiParamAssoc>();
-	//mac->paramIndex = mParamsGroup.size();
-	////ofLogWarning() << __FUNCTION__ << " ";
-	//if (aparam.type() == typeid(ofParameter<int>).name()) {
-	//	mac->ptype = PTYPE_INT;
-	//	ofParameter<int> ti = aparam.cast<int>();
-	//	ofParameterGroup pgroup = ti.getFirstParent();
-	//	if (pgroup) {
-	//		mac->xmlParentName = pgroup.getEscapedName();
-	//	}
-	//}
-	//else if (aparam.type() == typeid(ofParameter<float>).name()) {
-	//	mac->ptype = PTYPE_FLOAT;
-	//	ofParameter<float> fi = aparam.cast<float>();
-	//	ofParameterGroup pgroup = fi.getFirstParent();
-	//	if (pgroup) {
-	//		mac->xmlParentName = pgroup.getEscapedName();
-	//	}
-	//}
-	//else if (aparam.type() == typeid(ofParameter<bool>).name()) {
-	//	mac->ptype = PTYPE_BOOL;
-	//	ofParameter<bool> bi = aparam.cast<bool>();
-	//	ofParameterGroup pgroup = bi.getFirstParent();
-	//	if (pgroup) {
-	//		mac->xmlParentName = pgroup.getEscapedName();
-	//	}
-	//}
-	//if (mac->ptype == PTYPE_UNKNOWN) {
-	//	//ofLogNotice("ofxMidiParams :: addParam : unsupported param type");
-	//	return;
-	//}
-	//mac->xmlName = aparam.getEscapedName();
-	//mParamsGroup.add(aparam);
-	//mAssocParams.push_back(mac);
 }
 
 //--------------------------------------------------------------
@@ -1172,7 +1105,7 @@ void ofxSurfingTween::setup(ofParameterGroup& aparams) {
 	outputs.resize(NUM_VARS);
 
 	animator.setNameLabel("ANIMATOR");
-	animator.setup(0, 1);
+	animator.setup(0, 1);//we use the animators normalized and the recalculate each param range from min to max.
 	animator.setModeBrowse(false);
 
 	inputs.resize(NUM_VARS);
@@ -1252,158 +1185,93 @@ int ofxSurfingTween::get(ofParameter<int> &e) {
 	}
 }
 
-//--------------------------------------------------------------
-ofAbstractParameter& ofxSurfingTween::getParamAbstract(ofAbstractParameter &e) {
-	string name = e.getName();
-	auto &p = mParamsGroup.get(name);
-	auto i = mParamsGroup.getPosition(name);
-	float value = outputs[i].getValue();
-
-	//ofAbstractParameter& aparam = mParamsGroup[i];
-	//float value = 0;
-	//if (aparam.type() == typeid(ofParameter<int>).name()) {
-	//	ofParameter<int> ti = aparam.cast<int>();
-	//	value = ofMap(ti, ti.getMin(), ti.getMax(), 0, 1);
-	//}
-	//else if (aparam.type() == typeid(ofParameter<float>).name()) {
-	//	ofParameter<float> ti = aparam.cast<float>();
-	//	value = ofMap(ti, ti.getMin(), ti.getMax(), 0, 1);
-	//}
-	//ofLogNotice(__FUNCTION__) << aparam.getName() << " : " << e;
-
-	return p;
-}
-
-//--------------------------------------------------------------
-ofAbstractParameter& ofxSurfingTween::getParamAbstract(string name) {
-	auto &p = mParamsGroup.get(name);
-
-	auto i = mParamsGroup.getPosition(name);
-	float value = outputs[i].getValue();
-
-	return p;
-}
-
-//--------------------------------------------------------------
-ofParameter<float>& ofxSurfingTween::getParamFloat(string name) {
-	//auto &p = mParamsGroup.get(name);
-	//auto i = mParamsGroup.getPosition(name);
-	//if (p.type() == typeid(ofParameter<float>).name()) {
-	//	ofParameter<float> pf = p.cast<float>();
-	//	ofParameter<float> pf_Out = pf;//set min/max
-	//	//ofParameter<float> pf_Out{ pf.getName(), 0, pf.getMin(), pf.getMax() };//set min/max
-	//	float value = ofMap(outputs[i].getValue(), 0, 1, pf.getMin(), pf.getMax());
-	//	pf_Out.set(value);
-	//	//pf.set(outputs[i].getValue());
-	//	return pf_Out;
-	//	//return pf;
-	//}
-	//else
-	//{
-	//	ofParameter<float> pf{ "empty", -1 };
-	//	return pf;
-	//}
-
-	auto &p = mParamsGroup_COPY.get(name);
-	auto i = mParamsGroup_COPY.getPosition(name);
-	if (p.type() == typeid(ofParameter<float>).name()) {
-		ofParameter<float> pf = p.cast<float>();
-		return pf;
-	}
-	else
-	{
-		ofParameter<float> pf{ "empty", -1 };
-		ofLogError(__FUNCTION__) << "Not expected type: " << name;
-		return pf;
-	}
-}
-
-//--------------------------------------------------------------
-float ofxSurfingTween::getParamFloatValue(ofAbstractParameter &e) {
-	string name = e.getName();
-
-	//auto &p = mParamsGroup.get(name);
-	//auto i = mParamsGroup.getPosition(name);
-	//if (p.type() == typeid(ofParameter<float>).name()) {
-	//	ofParameter<float> pf = p.cast<float>();
-	//	return ofMap(outputs[i].getValue(), 0, 1, pf.getMin(), pf.getMax());
-	//}
-	//else
-	//{
-	//	return -1;
-	//}
-
-	auto &p = mParamsGroup_COPY.get(name);
-	auto i = mParamsGroup_COPY.getPosition(name);
-	if (p.type() == typeid(ofParameter<float>).name()) {
-		ofParameter<float> pf = p.cast<float>();
-		return pf.get();
-	}
-	else
-	{
-		ofLogError(__FUNCTION__) << "Not expected type: " << name;
-		return -1;
-	}
-}
-
-//--------------------------------------------------------------
-int ofxSurfingTween::getParamIntValue(ofAbstractParameter &e) {
-	string name = e.getName();
-
-	//auto &p = mParamsGroup.get(name);
-	//auto i = mParamsGroup.getPosition(name);
-	//if (p.type() == typeid(ofParameter<int>).name()) {
-	//	ofParameter<int> pf = p.cast<int>();
-	//	return ofMap(outputs[i].getValue(), 0, 1, pf.getMin(), pf.getMax());
-	//}
-	//else
-	//{
-	//	return -1;
-	//}
-
-	auto &p = mParamsGroup_COPY.get(name);
-	auto i = mParamsGroup_COPY.getPosition(name);
-	if (p.type() == typeid(ofParameter<int>).name()) {
-		ofParameter<int> pf = p.cast<int>();
-		return pf.get();
-	}
-	else
-	{
-		ofLogError(__FUNCTION__) << "Not expected type: " << name;
-		return -1;
-	}
-}
-
-//--------------------------------------------------------------
-ofParameter<int>& ofxSurfingTween::getParamInt(string name) {
-	//auto &p = mParamsGroup.get(name);
-	//auto i = mParamsGroup.getPosition(name);
-	//if (p.type() == typeid(ofParameter<int>).name()) {
-	//	ofParameter<int> pi = p.cast<int>();
-	//	ofParameter<int> pi_Out = pi;//set min/max
-	//	pi.set(outputs[i].getValue());
-	//	return pi_Out;
-	//	//return pi;
-	//}
-	//else
-	//{
-	//	ofParameter<int> pi{ "empty", -1 };
-	//	return pi;
-	//}
-
-	auto &p = mParamsGroup_COPY.get(name);
-	auto i = mParamsGroup_COPY.getPosition(name);
-	if (p.type() == typeid(ofParameter<int>).name()) {
-		ofParameter<int> pf = p.cast<int>();
-		return pf;
-	}
-	else
-	{
-		ofParameter<int> pf{ "empty", -1 };
-		ofLogError(__FUNCTION__) << "Not expected type: " << name;
-		return pf;
-	}
-}
+////--------------------------------------------------------------
+//ofAbstractParameter& ofxSurfingTween::getParamAbstract(ofAbstractParameter &e) {
+//	string name = e.getName();
+//	auto &p = mParamsGroup.get(name);
+//	auto i = mParamsGroup.getPosition(name);
+//	float value = outputs[i].getValue();
+//
+//	return p;
+//}
+//
+////--------------------------------------------------------------
+//ofAbstractParameter& ofxSurfingTween::getParamAbstract(string name) {
+//	auto &p = mParamsGroup.get(name);
+//
+//	auto i = mParamsGroup.getPosition(name);
+//	float value = outputs[i].getValue();
+//
+//	return p;
+//}
+//
+////--------------------------------------------------------------
+//ofParameter<float>& ofxSurfingTween::getParamFloat(string name) {
+//
+//	auto &p = mParamsGroup_COPY.get(name);
+//	auto i = mParamsGroup_COPY.getPosition(name);
+//	if (p.type() == typeid(ofParameter<float>).name()) {
+//		ofParameter<float> pf = p.cast<float>();
+//		return pf;
+//	}
+//	else
+//	{
+//		ofParameter<float> pf{ "empty", -1 };
+//		ofLogError(__FUNCTION__) << "Not expected type: " << name;
+//		return pf;
+//	}
+//}
+//
+////--------------------------------------------------------------
+//float ofxSurfingTween::getParamFloatValue(ofAbstractParameter &e) {
+//	string name = e.getName();
+//
+//	auto &p = mParamsGroup_COPY.get(name);
+//	auto i = mParamsGroup_COPY.getPosition(name);
+//	if (p.type() == typeid(ofParameter<float>).name()) {
+//		ofParameter<float> pf = p.cast<float>();
+//		return pf.get();
+//	}
+//	else
+//	{
+//		ofLogError(__FUNCTION__) << "Not expected type: " << name;
+//		return -1;
+//	}
+//}
+//
+////--------------------------------------------------------------
+//int ofxSurfingTween::getParamIntValue(ofAbstractParameter &e) {
+//	string name = e.getName();
+//
+//	auto &p = mParamsGroup_COPY.get(name);
+//	auto i = mParamsGroup_COPY.getPosition(name);
+//	if (p.type() == typeid(ofParameter<int>).name()) {
+//		ofParameter<int> pf = p.cast<int>();
+//		return pf.get();
+//	}
+//	else
+//	{
+//		ofLogError(__FUNCTION__) << "Not expected type: " << name;
+//		return -1;
+//	}
+//}
+//
+////--------------------------------------------------------------
+//ofParameter<int>& ofxSurfingTween::getParamInt(string name) {
+//
+//	auto &p = mParamsGroup_COPY.get(name);
+//	auto i = mParamsGroup_COPY.getPosition(name);
+//	if (p.type() == typeid(ofParameter<int>).name()) {
+//		ofParameter<int> pf = p.cast<int>();
+//		return pf;
+//	}
+//	else
+//	{
+//		ofParameter<int> pf{ "empty", -1 };
+//		ofLogError(__FUNCTION__) << "Not expected type: " << name;
+//		return pf;
+//	}
+//}
 
 //--------------------------------------------------------------
 void ofxSurfingTween::doSetAll(bool b) {
