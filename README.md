@@ -1,20 +1,22 @@
 # ofxSurfingTween
 
 ## Overview
-An **openFrameworks** add-on to tween grouped ```ofParameters``` (Flont/Int yet)  to Target values using easing powerful animators.
+An **openFrameworks** add-on to tween grouped ```ofParameters``` to Target values using powerful Easing Animators.
 
-**ofxSurfingTween** is just a kind of helper with the **ofxSurfingAnimators** engine (powered with the awesome **ofxAnimatable**), ```ofParameters``` bridge, plottings, easy integration workflow, GUI, and settings management.  
+**ofxSurfingTween** is just a kind of helper with the **ofxSurfingAnimators** engine ```ofParameters``` bridge, plottings, easy integration workflow, GUI, and settings management.  
+
+(Powered with the awesome **ofxAnimatable**)  
 
 ## Screenshots
 <img src="docs/readme_images/Capture.PNG" width="100%" height="100%">
 
 ### Animator Detail
-<img src="docs/readme_images/Capture2.PNG" width="100%" height="100%">
+<img src="docs/readme_images/Capture2.PNG" width="10%" height="10%">
 
 ## Features
 - Tween Engine with all the **ofxAnimatable** power: 
     * 50+ curves.
-	* Playmodes: once, loop, back and forth, and play n times.
+	* Play modes: once, loop, back and forth, and play n times.
 	* Duration Time (ms) scaled or BPM MODE.
 	* Plot preview.
 - Simple use: Just pass your ```ofParameterGroup``` parameters container.
@@ -26,10 +28,10 @@ An **openFrameworks** add-on to tween grouped ```ofParameters``` (Flont/Int yet)
 - Some testing tools like timed randomizers.
 
 ## Workflow Usage
-  * 1. Set the Source params that will be used as Target values (destination).
-  * 2. Set and Tweak the Easing Animator: duration, BPM scaled, pre pause, curve types...etc. 
-  * 3. Trig the Easing Animator for all the parameres. 
-  * 4. Get the Tweened Target values to use in your scene.
+  **1.** Set the Source params that will be used as Target values (destination).
+  **2.** Set and Tweak the Easing Animator: duration, BPM scaled, pre pause, curve types...etc. 
+  **3.** Trig the Easing Animator for all the parameres. 
+  **4.** Get the Tweened Target values to use in your scene.
 
 ## Usage
  
