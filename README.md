@@ -1,7 +1,7 @@
 # ofxSurfingTween
 
 ## Overview
-An **openFrameworks** add-on to tween grouped ```ofParameters``` to setted target values using easing animators.
+An **openFrameworks** add-on to tween grouped ```ofParameters``` to target values using easing animators.
 
 **ofxSurfingTween** is just a kind of helper with the **ofxSurfingAnimators** engine powered with the awesome **ofxAnimatable** add-on, ```ofParameters``` bridge, plottings, easy integration workflow, GUI, and settings management.  
 
@@ -16,7 +16,7 @@ An **openFrameworks** add-on to tween grouped ```ofParameters``` to setted targe
 - Another smoothed ```ofParameterGroup``` will be created with the same parameters structure.
 - **WORKFLOW**:
   * Set Source params as Target states.
-  * Set, Tweak and Trig the Easing Animator. 
+  * Set, Tweak, and Trig the Easing Animator. 
   * Get the tweened target values
 - Only ```Float``` and ```Int``` types yet.
 - Scalable and draggable plots.
@@ -43,27 +43,27 @@ ofParameter<int> shapeType;
 ```.cpp
 void ofApp::setup() 
 {
-	params.setName("paramsGroup");
-	params.add(lineWidth.set("lineWidth", 0.5, 0.0, 1.0));
-	params.add(separation.set("separation", 50.0, 1.0, 100.0));
-	params.add(speed.set("speed", 0.5, 0.0, 1.0));
-	params.add(amount.set("amount", 1, 1, 10));
-	params.add(shapeType.set("shapeType", 0, 0, 3));
+    params.setName("paramsGroup");
+    params.add(lineWidth.set("lineWidth", 0.5, 0.0, 1.0));
+    params.add(separation.set("separation", 50.0, 1.0, 100.0));
+    params.add(speed.set("speed", 0.5, 0.0, 1.0));
+    params.add(amount.set("amount", 1, 1, 10));
+    params.add(shapeType.set("shapeType", 0, 0, 3));
 
-	dataTween.setup(params);
+    dataTween.setup(params);
 }
 
 void ofApp::update() 
 {
-	// Get the tweened parameters:
-	float _lineWidth = dataTween.get(lineWidth);
-	float _separation = dataTween.get(separation);
-	float _speed = dataTween.get(speed);
-	int _amount = dataTween.get(amount);
-	int _shapeType = dataTween.get(shapeType);
+    // Get the tweened parameters:
+    float _lineWidth = dataTween.get(lineWidth);
+    float _separation = dataTween.get(separation);
+    float _speed = dataTween.get(speed);
+    int _amount = dataTween.get(amount);
+    int _shapeType = dataTween.get(shapeType);
 
-	// We can get the tweened/target params using other approaches.
-	// Look on the example-Basic for more helping snippets 
+    // We can get the tweened/target params using other approaches.
+    // Look on the example-Basic for more helping snippets 
 }
 ```
 
@@ -95,7 +95,7 @@ _Thanks a lot to all these ofxAddons coders. Specially to @**armadillu**_
 ### TODO
 + Add more types: 2D/3D vectors and colors. Using templates [?] ...  
   [ _**ANY HELP/PULL ON THIS IS REALLY APPRECIATED!**_ ]
-+ Add "real" nested sub-groups with tree levels. Now the params are recreated on one depth level only. This could help when duplicated names or to indent sub-groups on a GUI too.
++ Add "real" nested sub-groups with tree levels. Now the params are recreated on one depth level only. This could help when duplicated names or indent sub-groups on a GUI too.
 
 ## Authors
 Original **ofxDataStream** engine author:  
