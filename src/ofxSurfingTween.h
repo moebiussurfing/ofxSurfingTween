@@ -7,12 +7,16 @@
 
 TODO:
 
-+ add colors types, vectors, using templates..
-+ avoid crash to unsuported types
+++ keys enabler toggle
+++ avoid crash to unsuported types
+++ add colors types, vectors, using templates..
+++ curve type combo list
+++ discard animator group. make custom layout
+
 + independent settings for each param.. ?
 + "real" nested sub-groups tree levels.. ?
-+ add param to calibrate max history smooth/speed..
-+ plotting int type should be stepped/not continuous..
++ add param to calibrate max history smooth/speed.. ?
++ plotting int type should be stepped/not continuous.. ?
 
 */
 
@@ -113,6 +117,7 @@ public:
 	//simple getters
 	float get(ofParameter<float> &e);
 	int get(ofParameter<int> &e);
+
 	//complex getters
 	//float getParamFloatValue(ofAbstractParameter &e);
 	//int getParamIntValue(ofAbstractParameter &e);
