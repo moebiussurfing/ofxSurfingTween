@@ -3,7 +3,7 @@
 ## Overview
 An **openFrameworks** add-on to tween grouped ```ofParameters``` to target values using easing animators.
 
-**ofxSurfingTween** is just a kind of helper with the **ofxSurfingAnimators** engine powered with the awesome **ofxAnimatable** add-on, ```ofParameters``` bridge, plottings, easy integration workflow, GUI, and settings management.  
+**ofxSurfingTween** is just a kind of helper with the **ofxSurfingAnimators** engine (powered with the awesome **ofxAnimatable**), ```ofParameters``` bridge, plottings, easy integration workflow, GUI, and settings management.  
 
 ## Screenshow
 <img src="docs/readme_images/Capture.PNG" width="100%" height="100%">
@@ -19,10 +19,10 @@ An **openFrameworks** add-on to tween grouped ```ofParameters``` to target value
 - Some helper testers like randomizers.
 
 ## Workflow
-  * Set the Source params that will be used as Target values (destination).
-  * Set and Tweak the Easing Animator: duration, BPM scaled, pre pause, curve types...etc. 
-  * Trig the Easing Animator for all the parameres. 
-  * Get the Tweened Target values to use in your scene.
+  1. Set the Source params that will be used as Target values (destination).
+  2. Set and Tweak the Easing Animator: duration, BPM scaled, pre pause, curve types...etc. 
+  3. Trig the Easing Animator for all the parameres. 
+  4. Get the Tweened Target values to use in your scene.
 
 ## Usage
  
