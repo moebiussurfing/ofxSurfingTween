@@ -6,22 +6,23 @@ An **openFrameworks** add-on to tween grouped ```ofParameters``` to target value
 **ofxSurfingTween** is just a kind of helper with the **ofxSurfingAnimators** engine powered with the awesome **ofxAnimatable** add-on, ```ofParameters``` bridge, plottings, easy integration workflow, GUI, and settings management.  
 
 ## Screenshow
-<img src="docs/readme_images/Capture.PNG" width="80%" height="80%">
-
-<!-- ## Screencast  -->
-<!-- <img src="docs/readme_images/ofxSurfingTween.gif" width="80%" height="80%"> -->
+<img src="docs/readme_images/Capture.PNG" width="100%" height="100%">
 
 ## Features
 - Just pass your ```ofParameterGroup``` parameters container.
-- Another smoothed ```ofParameterGroup``` will be created with the same parameters structure.
-- **WORKFLOW**:
-  * Set Source params as Target states.
-  * Set, Tweak, and Trig the Easing Animator. 
-  * Get the tweened target values
+- Another usable ```ofParameterGroup``` will be created with the same parameters structure.
+- Tween Engine with all the **ofxAnimatable** power.
 - Only ```Float``` and ```Int``` types yet.
 - Scalable and draggable plots.
 - Auto Store/Recall all the settings.
 - **ImGui** based GUI ready to integrate.
+- Some helper testers like randomizers.
+
+## Workflow
+  * Set the Source params that will be used as Target values (destination).
+  * Set and Tweak the Easing Animator: duration, BPM scaled, pre pause, curve types...etc. 
+  * Trig the Easing Animator for all the parameres. 
+  * Get the Tweened Target values to use in your scene.
 
 ## Usage
  
@@ -94,8 +95,8 @@ _Thanks a lot to all these ofxAddons coders. Specially to @**armadillu**_
 
 ### TODO
 + Add more types: 2D/3D vectors and colors. Using templates [?] ...  
-  [ _**ANY HELP/PULL ON THIS IS REALLY APPRECIATED!**_ ]
-+ Add "real" nested sub-groups with tree levels. Now the params are recreated on one depth level only. This could help when duplicated names or indent sub-groups on a GUI too.
+  [ _**ANY HELP/PULL ON THIS IS APPRECIATED!**_ ]
++ Add "real" nested sub-groups with indented tree levels. Now the params are recreated on one depth level only. This could help when duplicated names or indent sub-groups on a GUI too.
 
 ## Author
 An add-on by **@moebiusSurfing**  
