@@ -11,7 +11,7 @@ An **openFrameworks** add-on to tween grouped ```ofParameters``` to Target value
 <img src="docs/readme_images/Capture.PNG" width="100%" height="100%">
 
 ### Animator Detail
-<img src="docs/readme_images/Capture2.PNG" width="10%" height="10%">
+<img src="docs/readme_images/Capture2.PNG" width="40%" height="40%">
 
 ## Features
 - Tween Engine with all the **ofxAnimatable** power: 
