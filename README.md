@@ -3,7 +3,7 @@
 ## Overview
 An **openFrameworks** add-on to **tween** grouped ```ofParameters``` to Target values using powerful **Easing Animators**.
 
-**ofxSurfingTween** is a helper with the **ofxSurfingAnimators** engine with an ```ofParameters``` bridge, plottings, easy integration workflow, GUI, and settings management.  
+**ofxSurfingTween** is a helper with the **ofxSurfingAnimators** engine plus an ```ofParameters``` bridge, live plottings, easy integration workflow, GUI, and settings management.  
 
 Powered with the _**awesome**_ [ofxAnimatable](https://github.com/armadillu/ofxAnimatable) from @**armadillu**. 
 
@@ -15,23 +15,23 @@ Powered with the _**awesome**_ [ofxAnimatable](https://github.com/armadillu/ofxA
 
 ## Features
 - Tween Engine with all the **ofxAnimatable** power: 
-    * 50+ curves.
-	* Play modes: once, loop, back and forth, and play n times.
-	* Duration Time (ms) scaled or BPM MODE.
+    * 50+ ease curves.
+	* **Play modes**: once, loop, back and forth, and play n times.
+	* **Duration** Time (ms) scaled or **BPM MODE**.
 	* Plot preview.
-- Simple use: Just pass your ```ofParameterGroup``` parameters container.
+- **Simple use**: Just pass your ```ofParameterGroup``` parameters container.
 - Another usable ```ofParameterGroup``` will be created with the same parameters structure.
 - Only ```Float``` and ```Int``` types yet.
 - Scalable and draggable plots. SOLO monitor to one parameter with full size.
-- Auto Store/Recall all the settings.
-- **ImGui** based GUI, docking, ready to integrate.
-- Some testing tools like timed randomizers.
+- Auto **Store/Recall** all the settings.
+- **ImGui** based **GUI**, docking, ready to integrate.
+- Some **testing tools** like timed randomizers.
 
 ## Workflow Usage
-  1. Set the Source params that will be used as Target values (destination).
-  2. Set and Tweak the Easing Animator: duration, BPM scaled, pre pause, curve types...etc. 
-  3. Trig the Easing Animator for all the parameres. 
-  4. Get the Tweened Target values to use in your scene.
+  1. Set the **Source** params that will be used as **Target** values (destination).
+  2. Set and Tweak the **Easing Animator**: duration, BPM scaled, pre pause, curve types...etc. 
+  3. **Trig the Easing** Animator for all the parameres. 
+  4. **Get** the Tweened Target **values** to use in your scene.
 
 ## Usage
  
