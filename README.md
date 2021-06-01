@@ -1,28 +1,35 @@
 # ofxSurfingTween
 
 ## Overview
-An **openFrameworks** add-on to tween grouped ```ofParameters``` to target values using easing animators.
+An **openFrameworks** add-on to tween grouped ```ofParameters``` (Flont/Int yet)  to Target values using easing powerful animators.
 
 **ofxSurfingTween** is just a kind of helper with the **ofxSurfingAnimators** engine (powered with the awesome **ofxAnimatable**), ```ofParameters``` bridge, plottings, easy integration workflow, GUI, and settings management.  
 
-## Screenshow
+## Screenshots
 <img src="docs/readme_images/Capture.PNG" width="100%" height="100%">
 
-## Features
-- Just pass your ```ofParameterGroup``` parameters container.
-- Another usable ```ofParameterGroup``` will be created with the same parameters structure.
-- Tween Engine with all the **ofxAnimatable** power.
-- Only ```Float``` and ```Int``` types yet.
-- Scalable and draggable plots.
-- Auto Store/Recall all the settings.
-- **ImGui** based GUI ready to integrate.
-- Some helper testers like randomizers.
+### Animator Detail
+<img src="docs/readme_images/Capture2.PNG" width="100%" height="100%">
 
-## Workflow
-  1. Set the Source params that will be used as Target values (destination).
-  2. Set and Tweak the Easing Animator: duration, BPM scaled, pre pause, curve types...etc. 
-  3. Trig the Easing Animator for all the parameres. 
-  4. Get the Tweened Target values to use in your scene.
+## Features
+- Tween Engine with all the **ofxAnimatable** power: 
+    * 50+ curves.
+	* Playmodes: once, loop, back and forth, and play n times.
+	* Duration Time (ms) scaled or BPM MODE.
+	* Plot preview.
+- Simple use: Just pass your ```ofParameterGroup``` parameters container.
+- Another usable ```ofParameterGroup``` will be created with the same parameters structure.
+- Only ```Float``` and ```Int``` types yet.
+- Scalable and draggable plots. SOLO monitor to one parameter with full size.
+- Auto Store/Recall all the settings.
+- **ImGui** based GUI, docking, ready to integrate.
+- Some testing tools like timed randomizers.
+
+## Workflow Usage
+  * 1. Set the Source params that will be used as Target values (destination).
+  * 2. Set and Tweak the Easing Animator: duration, BPM scaled, pre pause, curve types...etc. 
+  * 3. Trig the Easing Animator for all the parameres. 
+  * 4. Get the Tweened Target values to use in your scene.
 
 ## Usage
  
@@ -32,7 +39,7 @@ An **openFrameworks** add-on to tween grouped ```ofParameters``` to target value
 
 ofxSurfingTween dataTween;
 
-ofParameterGroup params; // main container
+ofParameterGroup params; // group container
 ofParameter<float> lineWidth;
 ofParameter<float> separation;
 ofParameter<float> speed;
