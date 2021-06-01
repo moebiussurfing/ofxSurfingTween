@@ -14,7 +14,7 @@ class ofApp : public ofBaseApp{
 		void draw();
 		void keyPressed(int key);
 
-		ofxSurfingTween data;
+		ofxSurfingTween dataTween;
 
 		ofParameterGroup params;
 		ofParameter<float> lineWidth;
@@ -33,8 +33,8 @@ class ofApp : public ofBaseApp{
 		ofParameter<float> speed3;
 		ofParameter<int> shapeType3;
 		
-		ofxPanel gui;
-		ofxPanel guiSmooth;
+		ofxPanel guiSource;
+		ofxPanel guiTween;
 		bool bGui = false;
 
 		ofxWindowApp windowApp;

@@ -1,12 +1,14 @@
 #pragma once
 
+#include "ofMain.h"
+
+
 /*
 
 TODO:
 
 + add colors types, vectors, using templates..
-	+ avoid crash to unsuported types
-
++ avoid crash to unsuported types
 + independent settings for each param.. ?
 + "real" nested sub-groups tree levels.. ?
 + add param to calibrate max history smooth/speed..
@@ -15,10 +17,7 @@ TODO:
 */
 
 
-#include "ofMain.h"
-
 #include "FloatAnimator.h"
-
 #include "ofxHistoryPlot.h"
 #include "ofxImGui.h"
 #include "imgui.h"
@@ -36,21 +35,20 @@ class myTweenerClass
 {
 private:
 	float value;
+
 public:
 	float from;
 	float to;
-	float getValue() { 
-		//value = ofMap(percent, 0, 1, from, to);
-		return value; 
+	float getValue() {
+		return value;
 	}
-
 	void update(float percent) {
 		value = ofMap(percent, 0, 1, from, to);
 	}
 };
 
-//----
 
+//--------------------------------------------------------------
 class ofxSurfingTween /*: public ofBaseApp*/ {
 
 public:
@@ -67,10 +65,11 @@ private:
 	void doEnableAll();
 
 public:
+	//required to set to false when only one ImGui instance is created
 	//--------------------------------------------------------------
 	void setImGuiAutodraw(bool b) {
 		bAutoDraw = b;
-	}//required to set to false when only one ImGui instance is created
+	}
 
 	//--------------------------------------------------------------
 	void setImGuiSharedMode(bool b) {
@@ -99,8 +98,6 @@ public:
 	void add(ofParameter<int>& aparam);
 	void addParam(ofAbstractParameter& aparam);
 
-	//void addGroupSmooth_ImGuiWidgets(ofParameterGroup &group);//monitor preview: to populate the widgets inside an ImGui begin/end
-
 	//-
 
 	// api 
@@ -125,7 +122,6 @@ public:
 public:
 	void doGo();
 	void doRandomize(bool bGo = false);//do and set random in min/max range for all params
-	//void doRandomize(int index, bool bForce);//do random in min/max range for a param. bForce ignores enabler
 
 	//---
 
@@ -150,11 +146,7 @@ private:
 
 private:
 	FloatAnimator animator;
-
 	vector<myTweenerClass> outputs;
-	//vector<float> outputs;
-	//vector<FloatAnimator> outputs;//the smooth class
-
 	vector<float> inputs;//feed normnalized signals here
 	vector<float> generators;//testing signals
 
@@ -194,23 +186,12 @@ private:
 	ofParameter<bool> bReset;
 	ofParameter<bool> bPlay;
 	ofParameter<float> playSpeed;
-	//ofParameter<bool> bUseGenerators;
-	//ofParameter<int> typeSmooth;
-	//ofParameter<string> typeSmooth_Str;
-	//ofParameter<int> typeMean;
-	//ofParameter<string> typeMean_Str;
 	//ofParameter<bool> bClamp;
 	//ofParameter<float> minInput;
 	//ofParameter<float> maxInput;
 	//ofParameter<bool> bNormalized;
 	//ofParameter<float> minOutput;
 	//ofParameter<float> maxOutput;
-	//ofParameter<float> smoothPower;
-	//ofParameter<float> threshold;
-	//ofParameter<float> onsetGrow;
-	//ofParameter<float> onsetDecay;
-	//ofParameter<float> slideMin;
-	//ofParameter<float> slideMax;
 
 	//tester timers
 	int tf;
@@ -233,7 +214,7 @@ private:
 	ofParameter<bool> auto_resize{ "Auto Resize", true };
 	ofParameter<bool> bLockMouseByImGui{ "Mouse Locked", false };
 	ofParameter<bool> auto_lockToBorder{ "Lock GUI", false };
-	
+
 	//--
 
 public:
@@ -244,6 +225,7 @@ private:
 	ofTrueTypeFont font;
 
 public:
+	//--------------------------------------------------------------
 	std::string getHelpInfo() {
 		return helpInfo;
 	}

@@ -1,24 +1,24 @@
 # ofxSurfingTween
 
 ## Overview
-An **openFrameworks** add-on to do different styles of timed **smoothing** to grouped ```ofParameters```.
+An **openFrameworks** add-on to tween grouped ```ofParameters``` to setted target values using easing animators.
 
-## ofxDataStream engine based  
-This add-on is extremely based on:  
-https://github.com/turowskipaul/ofxDataStream  
-Copyright (C) 2015, Paul Turowski. (http://paulturowski.com)  
+**ofxSurfingTween** is just a kind of helper with the **ofxSurfingAnimators** engine powered with the awesome **ofxAnimatable** add-on, ```ofParameters``` bridge, plottings, easy integration workflow, GUI, and settings management.  
 
-**ofxSurfingTween** is just a kind of helper with the **ofxDataStream** engine, ```ofParameters``` bridge, plottings, easy integration workflow, GUI, and settings management.  
+## Screenshow
+<img src="docs/readme_images/Capture.PNG" width="80%" height="80%">
 
-## Screencast 
-<img src="docs/readme_images/ofxSurfingTween.gif" width="80%" height="80%">
+<!-- ## Screencast  -->
+<!-- <img src="docs/readme_images/ofxSurfingTween.gif" width="80%" height="80%"> -->
 
 ## Features
 - Just pass your ```ofParameterGroup``` parameters container.
 - Another smoothed ```ofParameterGroup``` will be created with the same parameters structure.
-- 2 Smoothing algorithms: **Accumulator** and **Slide**.
-- 3 Mean types: **Arithmetic**, **Geometric** and **Harmonic**.
-- Only ```float``` and ```int``` types yet.
+- **WORKFLOW**:
+  * Set Source params as Target states.
+  * Set, Tweak and Trig the Easing Animator. 
+  * Get the tweened target values
+- Only ```Float``` and ```Int``` types yet.
 - Scalable and draggable plots.
 - Auto Store/Recall all the settings.
 - **ImGui** based GUI ready to integrate.
@@ -29,7 +29,7 @@ Copyright (C) 2015, Paul Turowski. (http://paulturowski.com)
 ```.cpp
 #include "ofxSurfingTween.h"
 
-ofxSurfingTween data;
+ofxSurfingTween dataTween;
 
 ofParameterGroup params; // main container
 ofParameter<float> lineWidth;
@@ -50,39 +50,37 @@ void ofApp::setup()
 	params.add(amount.set("amount", 1, 1, 10));
 	params.add(shapeType.set("shapeType", 0, 0, 3));
 
-	data.setup(params);
+	dataTween.setup(params);
 }
 
 void ofApp::update() 
 {
-	// Get the smoothed parameters:
-	float _lineWidth = data.get(lineWidth);
-	float _separation = data.get(separation);
-	float _speed = data.get(speed);
-	int _amount = data.get(amount);
-	int _shapeType = data.get(shapeType);
+	// Get the tweened parameters:
+	float _lineWidth = dataTween.get(lineWidth);
+	float _separation = dataTween.get(separation);
+	float _speed = dataTween.get(speed);
+	int _amount = dataTween.get(amount);
+	int _shapeType = dataTween.get(shapeType);
 
-	// We can get the smoothed params using other approaches.
+	// We can get the tweened/target params using other approaches.
 	// Look on the example-Basic for more helping snippets 
 }
 ```
-
- 
-
 
 <details>
   <summary>Dependencies</summary>
   <p>
 
 Clone these add-ons and include into the **OF PROJECT GENERATOR** to allow compile your projects or the examples:
+* [ofxSurfingAnimators](https://github.com/moebiussurfing/ofxSurfingAnimators) 
+* [ofxAnimatable](https://github.com/moebiussurfing/ofxAnimatable)  [ FORK ] 
 * [ofxHistoryPlot](https://github.com/moebiussurfing/ofxHistoryPlot)  [ FORK ]
 * [ofxScaleDragRect](https://github.com/moebiussurfing/ofxScaleDragRect)  [ FORK ]
 * [ofxImGui](https://github.com/Daandelange/ofxImGui/tree/ofParameters-Helpers-Test)  [ FORK/BRANCH ]  
 * [ofxSurfingHelpers](https://github.com/moebiussurfing/ofxSurfingHelpers)  
-* [ofxWindowApp](https://github.com/moebiussurfing/ofxWindowApp)  [ Only for **example-Advanced** ]  
-* [ofxMidiParams](https://github.com/moebiussurfing/ofxMidiParams)  [ FORK | **Only for example-Advanced** ]  
+* [ofxWindowApp](https://github.com/moebiussurfing/ofxWindowApp)  [ Only for **example** ]  
 
-*Thanks a lot to all these ofxAddons coders.*  
+_Thanks a lot to all these ofxAddons coders. Specially to @**armadillu**_  
   </p>
 </details>
 
@@ -95,16 +93,9 @@ Clone these add-ons and include into the **OF PROJECT GENERATOR** to allow compi
 </details>
 
 ### TODO
-+ Simplify API getters.
 + Add more types: 2D/3D vectors and colors. Using templates [?] ...  
   [ _**ANY HELP/PULL ON THIS IS REALLY APPRECIATED!**_ ]
 + Add "real" nested sub-groups with tree levels. Now the params are recreated on one depth level only. This could help when duplicated names or to indent sub-groups on a GUI too.
-+ Add independent thresholds/onSet for each parameter/channel and make it functional. Add callbacks to trig other events...
-+ Add a global param to calibrate max history/speed.
-
-#### ALTERNATIVE
-There's another more powerful but complex filtering add-on that you can check too:  
-https://github.com/bensnell/ofxFilter
 
 ## Authors
 Original **ofxDataStream** engine author:  

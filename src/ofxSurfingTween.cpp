@@ -153,23 +153,22 @@ void ofxSurfingTween::setupPlots() {
 void ofxSurfingTween::update(ofEventArgs & args) {
 	if (ofGetFrameNum() == 0) { startup(); }
 
-	// tester
+	// engine
+	updateSmooths();
+	updateEngine();
 
+	// tester
 	// play timed randoms
 	static const int _secs = 2;
 	if (bPlay) {
 		int max = ofMap(playSpeed, 0, 1, 60, 5) * _secs;
 		tf = ofGetFrameNum() % max;
-		tn = ofMap(tf, 0, max, 0, 1);
+		tn = ofMap(tf, 0, max, 0, 1, true);//used to fade button border
 		if (tf == 0)
 		{
-			doRandomize();
+			doRandomize(true);
 		}
 	}
-
-	// engine
-	updateSmooths();
-	updateEngine();
 }
 
 //--------------------------------------------------------------
@@ -325,66 +324,74 @@ void ofxSurfingTween::draw(ofEventArgs & args) {
 	//-
 
 	// help info
-	if (bShowHelp) 
+	if (bShowHelp)
 	{
 		int pad = 10;
-		auto _shape = ofxSurfingHelpers::getShapeBBtextBoxed(font, getHelpInfo());
-		ofxSurfingHelpers::drawTextBoxed(font, getHelpInfo(), 
-			pad, 
-			//ofGetWidth() - _shape.x - pad, 
-			ofGetHeight() - _shape.y - pad);
-		//ofDrawBitmapStringHighlight(getHelpInfo(), ofGetWidth() - 280, 25);
+		auto _shape = ofxSurfingHelpers::getShapeBBtextBoxed(font, helpInfo);
+		ofxSurfingHelpers::drawTextBoxed(font, helpInfo,
+			//pad, // x left
+			ofGetWidth()/2 - _shape.x/2, // x center
+			//ofGetWidth() - _shape.x - pad, // y bottom right
+			ofGetHeight() - _shape.y - pad); // y bottom left
+
+		//ofDrawBitmapStringHighlight(helpInfo, ofGetWidth() - 280, 25);
 	}
 
 	if (bGui) draw_ImGui();
 }
 
-//----
-
-// ACTIONS
+//--------
+// actions
 
 //--------------------------------------------------------------
 void ofxSurfingTween::doRandomize(bool bGo) {
 	ofLogNotice(__FUNCTION__);
 
-	for (int i = 0; i < mParamsGroup.size(); i++) {
+	for (int i = 0; i < mParamsGroup.size(); i++)
+	{
 		auto &p = mParamsGroup[i];
 
 		float v;
 
-		if (p.type() == typeid(ofParameter<float>).name()) {
+		if (p.type() == typeid(ofParameter<float>).name())
+		{
 			ofParameter<float> pr = p.cast<float>();
 			pr = ofRandom(pr.getMin(), pr.getMax());
 
-			v = ofMap(pr.get(), pr.getMin(), pr.getMax(), 0, 1);
+			v = ofMap(pr.get(), pr.getMin(), pr.getMax(), 0, 1, true);
 		}
-		else if (p.type() == typeid(ofParameter<int>).name()) {
+		else if (p.type() == typeid(ofParameter<int>).name())
+		{
 			ofParameter<int> pr = p.cast<int>();
 			pr = ofRandom(pr.getMin(), pr.getMax());
 
-			v = ofMap(pr.get(), pr.getMin(), pr.getMax(), 0, 1);
+			v = ofMap(pr.get(), pr.getMin(), pr.getMax(), 0, 1, true);
 		}
 
 		//-
 
-		if (bGo)
-		{
-			float vcurr = outputs[i].getValue();
-			outputs[i].from = vcurr;
-			outputs[i].to = v;
-
-			updateSmooths();
-		}
+		//if (bGo)
+		//{
+		//	float vcurr = outputs[i].getValue();
+		//	outputs[i].from = vcurr;
+		//	outputs[i].to = v;
+		//	updateSmooths();
+		//}
 	}
 
-	if (bGo) animator.start();
+	//if (bGo) animator.start();
+
+	//---
+
+	if (bGo) doGo();
 }
 
 //--------------------------------------------------------------
 void ofxSurfingTween::doGo() {
 	ofLogNotice(__FUNCTION__);
 
-	for (int i = 0; i < mParamsGroup.size(); i++) {
+	for (int i = 0; i < mParamsGroup.size(); i++)
+	{
 		ofAbstractParameter &p = mParamsGroup[i];
 
 		bool isFloat = p.type() == typeid(ofParameter<float>).name();
@@ -394,27 +401,21 @@ void ofxSurfingTween::doGo() {
 		float vFrom; // "from" will be the current output
 		vFrom = outputs[i].getValue();
 
-		if (isFloat) {
+		if (isFloat)
+		{
 			ofParameter<float> pr = p.cast<float>();
 			vTo = ofMap(pr.get(), pr.getMin(), pr.getMax(), 0, 1, true);
-			//vo = ofMap(outputs[i].getValue(), pr.getMin(), pr.getMax(), 0, 1, true);
 		}
-		else if (isInt) {
+		else if (isInt)
+		{
 			ofParameter<int> pr = p.cast<int>();
 			vTo = ofMap(pr.get(), pr.getMin(), pr.getMax(), 0, 1, true);
-			//vo = ofMap(outputs[i].getValue(), pr.getMin(), pr.getMax(), 0, 1, true);
 		}
 
 		outputs[i].from = vFrom;
 		outputs[i].to = vTo;
 
-		//animator.setStart(0);
-		//animator.setEnd(1);
 		animator.start();
-
-		//--
-
-		//inputs[i] = vTo;//constat until next go/randomize
 	}
 }
 
@@ -535,7 +536,7 @@ void ofxSurfingTween::drawPlots(ofRectangle r) {
 //--------------------------------------------------------------
 void ofxSurfingTween::keyPressed(int key) {
 
-	if (key == 'h') bShowHelp= !bShowHelp;
+	if (key == 'h') bShowHelp = !bShowHelp;
 	if (key == 'g') bGui = !bGui;
 
 	if (key == OF_KEY_F1 || key == OF_KEY_BACKSPACE) doRandomize(false);
@@ -588,6 +589,7 @@ void ofxSurfingTween::setupParams() {
 
 	//params
 	params.setName("Surfing Tweener");
+	params.add(bGui);
 	params.add(index.set("index", 0, 0, 0));
 	params.add(bPlay.set("PLAY", false));
 	params.add(playSpeed.set("Speed", 0.5, 0, 1));
@@ -600,6 +602,7 @@ void ofxSurfingTween::setupParams() {
 	params.add(enableTween.set("TWEEN", true));
 	params.add(solo.set("SOLO", false));
 	params.add(bReset.set("RESET", false));
+	//clamp/normalize
 	//params.add(minInput.set("min Input", 0, _inputMinRange, _inputMaxRange));
 	//params.add(maxInput.set("max Input", 1, _inputMinRange, _inputMaxRange));
 	//params.add(minOutput.set("min Output", 0, _outMinRange, _outMaxRange));
@@ -608,8 +611,6 @@ void ofxSurfingTween::setupParams() {
 	//params.add(bClamp.set("CLAMP", true));
 	//params.add(input.set("INPUT", 0, _inputMinRange, _inputMaxRange));
 	//params.add(output.set("OUTPUT", 0, _outMinRange, _outMaxRange));
-
-	params.add(bGui);
 
 	//exclude
 	input.setSerializable(false);
@@ -628,11 +629,10 @@ void ofxSurfingTween::setupParams() {
 	s += "+|-          :  CURVE TYPE"; s += "\n";
 	s += "\n";
 	s += "TESTER"; s += "\n";
-	s += "F1|BACKSPACE :  RANDOMiZE"; s += "\n";
+	s += "F1|BSPACE    :  RANDOMiZE"; s += "\n";
 	s += "F2           :  GO!"; s += "\n";
 	s += "F3|SPACE     :  RANDOMiZE+GO!"; s += "\n";
 	s += "RETURN       :  PLAY RANDOMiZER"; s += "\n";
-	s += "\n"; 
 	s += "\n";
 	s += "SOLO"; s += "\n";
 	s += "S            :  ENABLE SOLO"; s += "\n";
@@ -653,8 +653,9 @@ void ofxSurfingTween::doReset() {
 	ofLogNotice(__FUNCTION__);
 
 	enable = true;
+	output = 0;
+	playSpeed = 0.5;
 	//bPlay = false;
-	//bUseGenerators = false;
 	//bShowPlots = true;
 	//bShowInputs = true;
 	//bShowOutputs = true;
@@ -663,21 +664,8 @@ void ofxSurfingTween::doReset() {
 	//maxInput = 1;
 	//minOutput = 0;
 	//maxOutput = 1;
-	//slideMin = 0.2;
-	//slideMax = 0.2;
-	//onsetGrow = 0.1;
-	//onsetDecay = 0.1;
-	output = 0;
 	//bNormalized = false;
-	//smoothPower = 0.75;
-	//typeSmooth = 1;
-	//typeMean = 0;
 	//bClamp = true;
-	//threshold = 1.0;
-	playSpeed = 0.5;
-
-	//--
-
 }
 
 // callback for a parameter group
@@ -692,13 +680,15 @@ void ofxSurfingTween::Changed_Params(ofAbstractParameter &e)
 		ofLogNotice() << __FUNCTION__ << " : " << name << " : with value " << e;
 	}
 
-	if (name == bReset.getName())
+	if (name == bGui.getName())
 	{
-		if (bReset)
-		{
-			bReset = false;
-			doReset();
-		}
+		if (!bGui) animator.SHOW_Gui = false;
+	}
+
+	if (name == bReset.getName() && bReset)
+	{
+		bReset = false;
+		doReset();
 	}
 }
 
@@ -785,44 +775,48 @@ void ofxSurfingTween::draw_ImGui()
 
 				// enable/bypass
 				ofxSurfingHelpers::AddBigToggle(enableTween, _w100, _h);
+				ofxSurfingHelpers::AddBigToggle(animator.SHOW_Gui, _w100, _h);
 				if (enableTween)
 				{
 					ImGui::Dummy(ImVec2(0.0f, 2.0f));
 					ofxSurfingHelpers::AddBigToggle(bReset, _w100, _h50);
+
 					ImGui::Dummy(ImVec2(0.0f, 2.0f));
 				}
-				ImGui::Dummy(ImVec2(0.0f, 2.0f));
 
-				if (ImGui::CollapsingHeader("ACTIONS", _flagt))
+				if (enableTween)
 				{
-					if (ImGui::Button("GO!", ImVec2(_w100, _h))) {
-						doGo();
-					}
-				
-					//blink by timer
-					bool b = bPlay;
-					float a;
-					if (b) a = 1 - tn;
-					//if (b) a = ofxSurfingHelpers::getFadeBlink();
-					else a = 1.0f;
-					if (b) ImGui::PushStyleColor(ImGuiCol_Border, (ImVec4)ImColor::HSV(0.5f, 0.0f, 1.0f, 0.5 * a));
-					ofxSurfingHelpers::AddBigToggle(bPlay, _w100, _h / 2, false);
-					if (b) ImGui::PopStyleColor();
-					if (bPlay) {
-						//ImGui::SliderFloat("Speed", &playSpeed, 0, 1);
-						ofxImGui::AddParameter(playSpeed);
-						//ImGui::ProgressBar(tn);
-					}
-					if (ImGui::Button("RANDOMiZE+GO", ImVec2(_w100, _h))) {
-						doRandomize(true);
-					}
-					
-					if (ImGui::Button("RANDOMiZE", ImVec2(_w100, _h/2))) {
-						doRandomize(false);
-					}
-				}
+					if (ImGui::CollapsingHeader("ACTIONS", _flagt))
+					{
+						if (ImGui::Button("RANDOMiZE", ImVec2(_w100, _h / 2))) {
+							doRandomize(false);
+						}
 
-				ImGui::Dummy(ImVec2(0.0f, 2.0f));
+						if (ImGui::Button("GO!", ImVec2(_w100, _h))) {
+							doGo();
+						}
+
+						if (ImGui::Button("RANDOMiZE+GO", ImVec2(_w100, _h))) {
+							doRandomize(true);
+						}
+
+						//blink by timer
+						bool b = bPlay;
+						float a;
+						if (b) a = 1 - tn;
+						//if (b) a = ofxSurfingHelpers::getFadeBlink();
+						else a = 1.0f;
+						if (b) ImGui::PushStyleColor(ImGuiCol_Border, (ImVec4)ImColor::HSV(0.5f, 0.0f, 1.0f, 0.5 * a));
+						ofxSurfingHelpers::AddBigToggle(bPlay, _w100, _h / 2, false);
+						if (b) ImGui::PopStyleColor();
+						if (bPlay) {
+							//ImGui::SliderFloat("Speed", &playSpeed, 0, 1);
+							ofxImGui::AddParameter(playSpeed);
+							//ImGui::ProgressBar(tn);
+						}
+					}
+					ImGui::Dummy(ImVec2(0.0f, 2.0f));
+				}
 
 				//-
 
@@ -935,6 +929,8 @@ void ofxSurfingTween::draw_ImGui()
 
 					if (ImGui::CollapsingHeader("MONITOR", _flagt))
 					{
+						ofxSurfingHelpers::refreshImGui_WidgetsSizes(_spcx, _spcy, _w100, _h100, _w99, _w50, _w33, _w25, _h);
+
 						//ofxImGui::AddParameter(index);
 						if (ofxImGui::AddStepper(index)) {
 							index = ofClamp(index, index.getMin(), index.getMax());
@@ -958,6 +954,8 @@ void ofxSurfingTween::draw_ImGui()
 					ImGui::Dummy(ImVec2(0.0f, 2.0f));
 					if (ImGui::CollapsingHeader("ADVANCED"))
 					{
+						//ofxSurfingHelpers::refreshImGui_WidgetsSizes(_spcx, _spcy, _w100, _h100, _w99, _w50, _w33, _w25, _h);
+
 						//ofxSurfingHelpers::AddBigToggle(bUseGenerators, _w100, _h50);
 						ofxImGui::AddParameter(bShowHelp);
 						ofxImGui::AddParameter(rectangle_PlotsBg.bEditMode);
@@ -977,8 +975,9 @@ void ofxSurfingTween::draw_ImGui()
 
 			string name;
 
-			if (bShowInputs) {
-				name = "INPUTS";
+			if (bShowInputs)
+			{
+				name = "SOURCES";
 				if (ofxImGui::BeginWindow(name.c_str(), mainSettings, flagsw))
 				{
 					//ofxSurfingHelpers::refreshImGui_WidgetsSizes(_spcx, _spcy, _w100, _h100, _w99, _w50, _w33, _w25, _h);
@@ -992,8 +991,9 @@ void ofxSurfingTween::draw_ImGui()
 
 			//-
 
-			if (bShowOutputs) {
-				name = "OUTPUTS";
+			if (bShowOutputs)
+			{
+				name = "TWEENED";
 				//name = "TWEENED PARAMS";
 				if (ofxImGui::BeginWindow(name.c_str(), mainSettings, flagsw))
 				{
@@ -1004,16 +1004,6 @@ void ofxSurfingTween::draw_ImGui()
 					ofxImGui::AddGroup(mParamsGroup_COPY, flags);
 				}
 				ofxImGui::EndWindow(mainSettings);
-
-				//-
-
-				//name = "OUTPUTS";
-				//if (ofxImGui::BeginWindow(name.c_str(), mainSettings, flagsw))
-				//{
-				//	//ofxSurfingHelpers::refreshImGui_WidgetsSizes(_spcx, _spcy, _w100, _h100, _w99, _w50, _w33, _w25, _h);
-				//	addGroupSmooth_ImGuiWidgets(mParamsGroup);
-				//}
-				//ofxImGui::EndWindow(mainSettings);
 			}
 		}
 		ImGui::PopStyleVar();
@@ -1163,7 +1153,7 @@ void ofxSurfingTween::setup(ofParameterGroup& aparams) {
 
 	//TODO:
 	//group COPY
-	mParamsGroup_COPY.setName(n + "_SMOOTH");//name
+	mParamsGroup_COPY.setName(n + "_TWEEN");//name
 	//mParamsGroup_COPY.setName(n + suffix);//name
 
 	for (int i = 0; i < aparams.size(); i++) {
@@ -1414,48 +1404,6 @@ ofParameter<int>& ofxSurfingTween::getParamInt(string name) {
 		return pf;
 	}
 }
-
-//-----
-//
-////TODO: not using..
-//// will populate widgets params, to monitor the smoothed outputs, not the raw parameters (inputs)
-//// not using the recreated smooth parameters...
-////--------------------------------------------------------------
-//void ofxSurfingTween::addGroupSmooth_ImGuiWidgets(ofParameterGroup &group) {
-//	string n = group.getName() + " > Smoothed";
-//	if (ImGui::TreeNodeEx(n.c_str(), ImGuiTreeNodeFlags_Framed | ImGuiTreeNodeFlags_NoAutoOpenOnLog))
-//	{
-//		for (int i = 0; i < group.size(); i++)
-//		{
-//			auto type = group[i].type();
-//			bool isGroup = type == typeid(ofParameterGroup).name();
-//			bool isFloat = type == typeid(ofParameter<float>).name();
-//			bool isInt = type == typeid(ofParameter<int>).name();
-//			bool isBool = type == typeid(ofParameter<bool>).name();
-//			string str = group[i].getName();
-//
-//			if (isFloat)
-//			{
-//				float v = outputs[i].getValue();
-//				float min = group[i].cast<float>().getMin();
-//				float max = group[i].cast<float>().getMax();
-//				v = ofMap(v, 0, 1, min, max);
-//				ImGui::SliderFloat(str.c_str(), &v, min, max);
-//			}
-//			else if (isInt)
-//			{
-//				float vf = outputs[i].getValue();
-//				int vi;
-//				int min = group[i].cast<int>().getMin();
-//				int max = group[i].cast<int>().getMax();
-//				vi = (int)ofMap(vf, 0, 1, min, max);
-//				ImGui::SliderInt(str.c_str(), &vi, min, max);
-//			}
-//		}
-//
-//		ImGui::TreePop();
-//	}
-//}
 
 //--------------------------------------------------------------
 void ofxSurfingTween::doSetAll(bool b) {
