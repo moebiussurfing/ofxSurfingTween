@@ -97,11 +97,7 @@ _Thanks a lot to all these ofxAddons coders. Specially to @**armadillu**_
   [ _**ANY HELP/PULL ON THIS IS REALLY APPRECIATED!**_ ]
 + Add "real" nested sub-groups with tree levels. Now the params are recreated on one depth level only. This could help when duplicated names or indent sub-groups on a GUI too.
 
-## Authors
-Original **ofxDataStream** engine author:  
-Paul Turowski. http://paulturowski.com  
-Thanks @**turowskipaul** !  
-
+## Author
 An add-on by **@moebiusSurfing**  
 *( ManuMolina ) 2021*  
 
