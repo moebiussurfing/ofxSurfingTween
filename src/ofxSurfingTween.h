@@ -7,13 +7,9 @@
 
 TODO:
 
-++ keys enabler toggle
 ++ avoid crash to unsuported types
 ++ add colors types, vectors, using templates..
-++ curve type combo list
-++ discard animator group. make custom layout
 
-+ independent settings for each param.. ?
 + "real" nested sub-groups tree levels.. ?
 + add param to calibrate max history smooth/speed.. ?
 + plotting int type should be stepped/not continuous.. ?
@@ -39,7 +35,6 @@ class myTweenerClass
 {
 private:
 	float value;
-
 public:
 	float from;
 	float to;
@@ -51,7 +46,6 @@ public:
 	}
 };
 
-
 //--------------------------------------------------------------
 class ofxSurfingTween /*: public ofBaseApp*/ {
 
@@ -60,7 +54,7 @@ public:
 	~ofxSurfingTween();
 
 private:
-	ofParameterGroup params_EditorEnablers;//the enabled params to randomize
+	ofParameterGroup params_EditorEnablers;// the enabled params to randomize
 	vector<ofParameter<bool>> enablersForParams;
 	void drawToggles();
 
@@ -69,7 +63,7 @@ private:
 	void doEnableAll();
 
 public:
-	//required to set to false when only one ImGui instance is created
+	// required to set to false when only one ImGui instance is created
 	//--------------------------------------------------------------
 	void setImGuiAutodraw(bool b) {
 		bAutoDraw = b;
@@ -80,7 +74,7 @@ public:
 		gui.setSharedMode(b); // Force shared context
 	}
 
-	//----
+	//--
 
 public:
 	void update(ofEventArgs & args);
@@ -94,8 +88,12 @@ public:
 	// initializers
 
 public:
-	void setup(ofParameterGroup& aparams);//main setup method. to all pass the params with one line
+	void setup(ofParameterGroup& aparams);// main setup api/method. to pass all the params using just one line
 
+	//-
+
+	//internal params
+private:
 	void add(ofParameterGroup aparams);
 	void add(ofParameter<float>& aparam);
 	void add(ofParameter<bool>& aparam);
@@ -114,11 +112,11 @@ public:
 	}
 
 public:
-	//simple getters
+	// simple getters
 	float get(ofParameter<float> &e);
 	int get(ofParameter<int> &e);
 
-	//complex getters
+	// complex getters
 	//float getParamFloatValue(ofAbstractParameter &e);
 	//int getParamIntValue(ofAbstractParameter &e);
 	//ofAbstractParameter& getParamAbstract(ofAbstractParameter &e);
@@ -145,7 +143,7 @@ private:
 private:
 	ofParameterGroup mParamsGroup;
 
-	ofParameterGroup mParamsGroup_COPY;//TODO:
+	ofParameterGroup mParamsGroup_COPY;
 	string suffix = "";
 	//string suffix = "_COPY";
 
@@ -155,7 +153,6 @@ private:
 	FloatAnimator animator;
 	vector<myTweenerClass> outputs;
 	vector<float> inputs;//feed normnalized signals here
-	vector<float> generators;//testing signals
 
 	string path_Global;
 	string path_Settings;
@@ -194,6 +191,8 @@ private:
 	ofParameter<bool> bReset;
 	ofParameter<bool> bPlay;
 	ofParameter<float> playSpeed;
+
+	//clamp normalize
 	//ofParameter<bool> bClamp;
 	//ofParameter<float> minInput;
 	//ofParameter<float> maxInput;
@@ -208,11 +207,9 @@ private:
 	void doReset();
 	void setupParams();
 
-	bool bTrigManual = false;//flip first
-	bool bModeFast = false;//fast generators
-
 	//--
 
+	// ImGui
 	void setup_ImGui();
 	bool bAutoDraw = true;
 	void draw_ImGui();
