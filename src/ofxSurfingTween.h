@@ -19,18 +19,19 @@ TODO:
 
 #include "FloatAnimator.h"
 #include "ofxHistoryPlot.h"
+#include "ofxInteractiveRect.h"
 #include "ofxImGui.h"
 #include "imgui.h"
 #include "imgui_internal.h"
 #include "ofxSurfingHelpers.h"
-#include "ofxSurfing_Timers.h"
 #include "ofxSurfing_ImGuiBundle.h"
-#include "ofxInteractiveRect.h"
+#include "ofxSurfing_Timers.h"
 
 #define COLORS_MONCHROME // vs iterated hue
 
 //----
 
+//--------------------------------------------------------------
 class myTweenerClass
 {
 private:
@@ -45,6 +46,8 @@ public:
 		value = ofMap(percent, 0, 1, from, to);
 	}
 };
+
+//----
 
 //--------------------------------------------------------------
 class ofxSurfingTween /*: public ofBaseApp*/ {
@@ -98,6 +101,9 @@ private:
 	void add(ofParameter<float>& aparam);
 	void add(ofParameter<bool>& aparam);
 	void add(ofParameter<int>& aparam);
+	void add(ofParameter<glm::vec2>& aparam);
+	void add(ofParameter<glm::vec3>& aparam);
+	void add(ofParameter<glm::vec4>& aparam);
 	void addParam(ofAbstractParameter& aparam);
 
 	//-
@@ -153,6 +159,8 @@ private:
 	FloatAnimator animator;
 	vector<myTweenerClass> outputs;
 	vector<float> inputs;//feed normnalized signals here
+	
+	//void Changed_ParamsInput(ofAbstractParameter &e);
 
 	string path_Global;
 	string path_Settings;
@@ -176,7 +184,6 @@ private:
 	bool bDISABLE_CALLBACKS = true;
 
 	ofParameterGroup params;
-	ofParameter<bool> enable;
 	ofParameter<bool> bFullScreen;
 	ofParameter<bool> bShowPlots;
 	ofParameter<bool> bShowInputs;
@@ -185,7 +192,6 @@ private:
 	ofParameter<bool> bKeys;
 	ofParameter<bool> solo;
 	ofParameter<int> index;
-	ofParameter<bool> enableTween;
 	ofParameter<float> input;//index selected
 	ofParameter<float> output;
 	ofParameter<bool> bReset;
@@ -224,6 +230,13 @@ private:
 
 public:
 	ofParameter<bool> bGui{ "SURFING TWEENER", true };
+	ofParameter<bool> enableTween;
+	ofParameter<bool> enableLiveMode;
+
+	//--------------------------------------------------------------
+	void setLiveEditMode(bool b) {
+		enableLiveMode = b;
+	}
 
 private:
 	string helpInfo;
@@ -237,4 +250,41 @@ public:
 
 public:
 	ofParameter<bool> bShowGui{ "SHOW SMOOTH SURFER", true };// exposed to use in external gui's
+
+	//TODO:
+	////--------------------------------------------------------------
+	//template<typename ParameterType>
+	//void AddParameter(ofParameter<ParameterType>& parameter)
+	//{
+	//	auto tmpRef = parameter.get();
+	//	const auto& info = typeid(ParameterType);
+	//	if (info == typeid(float))
+	//	{
+	//	}
+	//	if (info == typeid(int))
+	//	{
+	//	}
+	//	if (info == typeid(bool))
+	//	{
+	//	}
+	//	ofLogWarning(__FUNCTION__) << "Could not create GUI element for type " << info.name();
+	//}
+
+	//TODO:
+	//--------------------------------------------------------------
+	template<typename ParameterType>
+	void getParam(ofParameter<ParameterType>& parameter)
+	{
+		string name = e.getName();
+		auto &p = mParamsGroup_COPY.get(name);
+		if (p.type() == typeid(ofParameter<ParameterType>).name())
+		{
+			return p.cast<ParameterType>().get();
+		}
+		else
+		{
+			ofLogError(__FUNCTION__) << "Not expected type: " << name;
+			return -1;
+		}
+	}
 };

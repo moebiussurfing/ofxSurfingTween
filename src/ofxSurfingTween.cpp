@@ -56,6 +56,9 @@ void ofxSurfingTween::setup() {
 
 //--------------------------------------------------------------
 void ofxSurfingTween::startup() {
+	
+	//ofAddListener(mParamsGroup.parameterChangedE(), this, &ofxSurfingTween::Changed_ParamsInput);
+
 	bDISABLE_CALLBACKS = false;
 
 	//doReset();
@@ -188,19 +191,23 @@ void ofxSurfingTween::updateSmooths() {
 		string name = _p.getName();
 		ofParameter<bool> _bSmooth = _p.cast<bool>();
 
+		//vec
+		bool isVec2 = type == typeid(ofParameter<glm::vec2>).name();
+		bool isVec3 = type == typeid(ofParameter<glm::vec3>).name();
+		bool isVec4 = type == typeid(ofParameter<glm::vec4>).name();
+
 		//-
 
 		// 2. get normalized input param
 
 		//string str = "";
 		//string name = aparam.getName();
-		float vn;//normalized params
+		float vn = 0;//normalized params
 
 		if (p.type() == typeid(ofParameter<float>).name()) {
 			ofParameter<float> _p = p.cast<float>();
 			vn = ofMap(_p, _p.getMin(), _p.getMax(), 0, 1, true);
 
-			//smooth group
 			auto pc = mParamsGroup_COPY.getFloat(_p.getName() + suffix);
 
 			if (enableTween && _bSmooth) {
@@ -216,7 +223,6 @@ void ofxSurfingTween::updateSmooths() {
 			ofParameter<int> _p = p.cast<int>();
 			vn = ofMap(_p, _p.getMin(), _p.getMax(), 0, 1, true);
 
-			//smooth group
 			auto pc = mParamsGroup_COPY.getInt(_p.getName() + suffix);
 
 			if (enableTween && _bSmooth) {
@@ -232,6 +238,64 @@ void ofxSurfingTween::updateSmooths() {
 		else if (p.type() == typeid(ofParameter<bool>).name()) {
 			ofParameter<bool> ti = p.cast<bool>();
 		}
+
+		//vec
+		else if (isVec2) {
+			ofParameter<ofDefaultVec2> _p = p.cast<ofDefaultVec2>();
+			float v1 = ofMap(_p.get().x, _p.getMin().x, _p.getMax().x, 0, 1, true);
+			float v2 = ofMap(_p.get().y, _p.getMin().y, _p.getMax().y, 0, 1, true);
+
+			auto pc = mParamsGroup_COPY.getVec2f(_p.getName() + suffix);
+
+			if (enableTween && _bSmooth) {
+				float _v1 = ofMap(outputs[i].getValue(), 0, 1, _p.getMin().x, _p.getMax().x, true);
+				float _v2 = ofMap(outputs[i].getValue(), 0, 1, _p.getMin().y, _p.getMax().y, true);
+				pc.set(glm::vec2(_v1, _v2));
+			}
+			else {
+				pc.set(_p.get());
+			}
+		}
+		else if (isVec3) {
+			ofParameter<ofDefaultVec3> _p = p.cast<ofDefaultVec3>();
+			float v1 = ofMap(_p.get().x, _p.getMin().x, _p.getMax().x, 0, 1, true);
+			float v2 = ofMap(_p.get().y, _p.getMin().y, _p.getMax().y, 0, 1, true);
+			float v3 = ofMap(_p.get().z, _p.getMin().y, _p.getMax().z, 0, 1, true);
+
+			auto pc = mParamsGroup_COPY.getVec3f(_p.getName() + suffix);
+
+			if (enableTween && _bSmooth) {
+				float _v1 = ofMap(outputs[i].getValue(), 0, 1, _p.getMin().x, _p.getMax().x, true);
+				float _v2 = ofMap(outputs[i].getValue(), 0, 1, _p.getMin().y, _p.getMax().y, true);
+				float _v3 = ofMap(outputs[i].getValue(), 0, 1, _p.getMin().z, _p.getMax().z, true);
+				pc.set(glm::vec3(_v1, _v2, _v3));
+			}
+			else {
+				pc.set(_p.get());
+			}
+		}
+		else if (isVec4) {
+			ofParameter<ofDefaultVec4> _p = p.cast<ofDefaultVec4>();
+			float v1 = ofMap(_p.get().x, _p.getMin().x, _p.getMax().x, 0, 1, true);
+			float v2 = ofMap(_p.get().y, _p.getMin().y, _p.getMax().y, 0, 1, true);
+			float v3 = ofMap(_p.get().z, _p.getMin().y, _p.getMax().z, 0, 1, true);
+			float v4 = ofMap(_p.get().w, _p.getMin().w, _p.getMax().w, 0, 1, true);
+
+			auto pc = mParamsGroup_COPY.getVec3f(_p.getName() + suffix);
+
+			if (enableTween && _bSmooth) {
+				float _v1 = ofMap(outputs[i].getValue(), 0, 1, _p.getMin().x, _p.getMax().x, true);
+				float _v2 = ofMap(outputs[i].getValue(), 0, 1, _p.getMin().y, _p.getMax().y, true);
+				float _v3 = ofMap(outputs[i].getValue(), 0, 1, _p.getMin().z, _p.getMax().z, true);
+				float _v4 = ofMap(outputs[i].getValue(), 0, 1, _p.getMin().w, _p.getMax().w, true);
+				pc.set(glm::vec4(_v1, _v2, _v3, _v4));
+			}
+			else {
+				pc.set(_p.get());
+			}
+		}
+
+		//-
 
 		else {
 			continue;
@@ -286,26 +350,27 @@ void ofxSurfingTween::updateEngine() {
 	// solo
 
 	// index selected
+	if (params_EditorEnablers.size() > 0) {
+		// toggle
+		int i = index;
+		auto &_p = params_EditorEnablers[i];// ofAbstractParameter
+		auto type = _p.type();
+		bool isBool = type == typeid(ofParameter<bool>).name();
+		string name = _p.getName();
+		ofParameter<bool> _bSmooth = _p.cast<bool>();
 
-	// toggle
-	int i = index;
-	auto &_p = params_EditorEnablers[i];// ofAbstractParameter
-	auto type = _p.type();
-	bool isBool = type == typeid(ofParameter<bool>).name();
-	string name = _p.getName();
-	ofParameter<bool> _bSmooth = _p.cast<bool>();
-
-	// output
-	if (enableTween && _bSmooth)
-	{
-		//if (bNormalized) output = outputs[index].getValueN();
-		//else output = outputs[index].getValue();
-		output = outputs[index].getValue();
-	}
-	// bypass
-	else
-	{
-		output = input;
+		// output
+		if (enableTween && _bSmooth)
+		{
+			//if (bNormalized) output = outputs[index].getValueN();
+			//else output = outputs[index].getValue();
+			output = outputs[index].getValue();
+		}
+		// bypass
+		else
+		{
+			output = input;
+		}
 	}
 }
 
@@ -332,7 +397,7 @@ void ofxSurfingTween::draw(ofEventArgs & args) {
 		auto _shape = ofxSurfingHelpers::getShapeBBtextBoxed(font, helpInfo);
 		ofxSurfingHelpers::drawTextBoxed(font, helpInfo,
 			//pad, // x left
-			ofGetWidth()/2 - _shape.x/2, // x center
+			ofGetWidth() / 2 - _shape.x / 2, // x center
 			//ofGetWidth() - _shape.x - pad, // y bottom right
 			ofGetHeight() - _shape.y - pad); // y bottom left
 
@@ -387,6 +452,12 @@ void ofxSurfingTween::doGo() {
 		bool isFloat = p.type() == typeid(ofParameter<float>).name();
 		bool isInt = p.type() == typeid(ofParameter<int>).name();
 
+		//vec
+		auto type = p.type();
+		bool isVec2 = type == typeid(ofParameter<glm::vec2>).name();
+		bool isVec3 = type == typeid(ofParameter<glm::vec3>).name();
+		bool isVec4 = type == typeid(ofParameter<glm::vec4>).name();
+
 		float vTo; // "to" target will be current input target
 		float vFrom; // "from" will be the current output
 		vFrom = outputs[i].getValue();
@@ -395,15 +466,48 @@ void ofxSurfingTween::doGo() {
 		{
 			ofParameter<float> pr = p.cast<float>();
 			vTo = ofMap(pr.get(), pr.getMin(), pr.getMax(), 0, 1, true);
+			outputs[i].from = vFrom;
+			outputs[i].to = vTo;
 		}
 		else if (isInt)
 		{
 			ofParameter<int> pr = p.cast<int>();
 			vTo = ofMap(pr.get(), pr.getMin(), pr.getMax(), 0, 1, true);
+			outputs[i].from = vFrom;
+			outputs[i].to = vTo;
 		}
 
-		outputs[i].from = vFrom;
-		outputs[i].to = vTo;
+		//TODO: 
+		//BUG:
+		//params with multuiple floats. how to handle?
+
+		//vec
+		else if (isVec2)
+		{
+			ofParameter<ofDefaultVec2> pr = p.cast<ofDefaultVec2>();
+			float vTo1 = ofMap(pr.get().x, pr.getMin().x, pr.getMax().x, 0, 1, true);
+			float vTo2 = ofMap(pr.get().y, pr.getMin().x, pr.getMax().y, 0, 1, true);
+			outputs[i].from = vFrom;
+			outputs[i].to = vTo;
+			//TODO: what about i+1+2?
+		}
+		else if (isVec3)
+		{
+			ofParameter<ofDefaultVec3> pr = p.cast<ofDefaultVec3>();
+			float vTo1 = ofMap(pr.get().x, pr.getMin().x, pr.getMax().x, 0, 1, true);
+			float vTo2 = ofMap(pr.get().y, pr.getMin().y, pr.getMax().y, 0, 1, true);
+			float vTo3 = ofMap(pr.get().z, pr.getMin().z, pr.getMax().z, 0, 1, true);
+		}
+		else if (isVec4)
+		{
+			ofParameter<ofDefaultVec4> pr = p.cast<ofDefaultVec4>();
+			float vTo1 = ofMap(pr.get().x, pr.getMin().x, pr.getMax().x, 0, 1, true);
+			float vTo2 = ofMap(pr.get().y, pr.getMin().y, pr.getMax().y, 0, 1, true);
+			float vTo3 = ofMap(pr.get().z, pr.getMin().z, pr.getMax().z, 0, 1, true);
+			float vTo4 = ofMap(pr.get().w, pr.getMin().w, pr.getMax().w, 0, 1, true);
+		}
+
+		//--
 
 		animator.start();
 	}
@@ -531,12 +635,10 @@ void ofxSurfingTween::keyPressed(int key) {
 
 	if (key == 'h') bShowHelp = !bShowHelp;
 	if (key == 'g') bGui = !bGui;
-
 	if (key == OF_KEY_F1 || key == OF_KEY_BACKSPACE) doRandomize(false);
 	if (key == OF_KEY_F2) doGo();
 	if (key == OF_KEY_F3 || key == ' ') doRandomize(true);
 	if (key == OF_KEY_F4) bPlay = !bPlay;
-
 	if (key == 's') solo = !solo;
 	if (key == OF_KEY_UP) {
 		index--;
@@ -546,7 +648,6 @@ void ofxSurfingTween::keyPressed(int key) {
 		index++;
 		index = ofClamp(index, index.getMin(), index.getMax());
 	}
-
 	if (key == '-') {
 		animator.previousCurve(true);
 	}
@@ -579,7 +680,7 @@ void ofxSurfingTween::setupParams() {
 	////    _outMinRange = 0;
 	////    _outMaxRange = 127;
 	////}
-	
+
 	rectangle_PlotsBg.bEditMode.setName("Edit Plots");
 
 	//params
@@ -589,15 +690,16 @@ void ofxSurfingTween::setupParams() {
 	params.add(index.set("Index", 0, 0, 0));
 	params.add(bPlay.set("PLAY", false));
 	params.add(playSpeed.set("Speed", 0.5, 0, 1));
-	params.add(enable.set("ENABLE", true));
 	params.add(bShowPlots.set("PLOTS", true));
 	params.add(bShowInputs.set("INPUTS", true));
 	params.add(bShowOutputs.set("OUTPUTS", true));
 	params.add(bShowHelp.set("Help", false));
 	params.add(bFullScreen.set("FULL SCREEN", false));
-	params.add(enableTween.set("TWEEN", true));
+	params.add(enableLiveMode.set("LIVE EDIT MODE", true));
+	params.add(enableTween.set("TWEEN ENABLE", true));
 	params.add(solo.set("SOLO", false));
 	params.add(bReset.set("RESET", false));
+
 	//clamp/normalize
 	//params.add(minInput.set("min Input", 0, _inputMinRange, _inputMaxRange));
 	//params.add(maxInput.set("max Input", 1, _inputMinRange, _inputMaxRange));
@@ -613,8 +715,11 @@ void ofxSurfingTween::setupParams() {
 	output.setSerializable(false);
 	solo.setSerializable(false);
 	bReset.setSerializable(false);
+	enableLiveMode.setSerializable(false);
 
 	ofAddListener(params.parameterChangedE(), this, &ofxSurfingTween::Changed_Params); // setup()
+
+	//-
 
 	// help info
 	string s = "";
@@ -648,14 +753,14 @@ void ofxSurfingTween::exit() {
 void ofxSurfingTween::doReset() {
 	ofLogNotice(__FUNCTION__);
 
-	enable = true;
+	enableLiveMode = true;
+	enableTween = true;
 	output = 0;
 	playSpeed = 0.5;
 	//bPlay = false;
 	//bShowPlots = true;
 	//bShowInputs = true;
 	//bShowOutputs = true;
-	//enableTween = true;
 	//minInput = 0;
 	//maxInput = 1;
 	//minOutput = 0;
@@ -667,6 +772,23 @@ void ofxSurfingTween::doReset() {
 }
 
 // callback for a parameter group
+
+////--------------------------------------------------------------
+//void ofxSurfingTween::Changed_ParamsInput(ofAbstractParameter &e)
+//{
+//	if (bDISABLE_CALLBACKS) return;
+//
+//	string name = e.getName();
+//	if (name != input.getName() && name != output.getName() && name != "")
+//	{
+//		ofLogVerbose() << __FUNCTION__ << " : " << name << " : with value " << e;
+//	}
+//
+//	if (enableLiveMode) {
+//
+//	}
+//}
+
 //--------------------------------------------------------------
 void ofxSurfingTween::Changed_Params(ofAbstractParameter &e)
 {
@@ -689,6 +811,10 @@ void ofxSurfingTween::Changed_Params(ofAbstractParameter &e)
 		doReset();
 	}
 }
+
+//--
+
+// ImGui
 
 //TODO:
 //swap to layout ImGui
@@ -774,6 +900,7 @@ void ofxSurfingTween::draw_ImGui()
 				// enable/bypass
 				ofxSurfingHelpers::AddBigToggle(enableTween, _w100, _h);
 				ofxSurfingHelpers::AddBigToggle(animator.SHOW_Gui, _w100, _h);
+				ofxSurfingHelpers::AddBigToggle(enableLiveMode, _w100, _h/2);
 				if (enableTween)
 				{
 					ImGui::Dummy(ImVec2(0.0f, 2.0f));
@@ -903,7 +1030,7 @@ void ofxSurfingTween::draw_ImGui()
 					if (ImGui::CollapsingHeader("MONITOR", _flagt))
 					{
 						ofxSurfingHelpers::refreshImGui_WidgetsSizes(_spcx, _spcy, _w100, _h100, _w99, _w50, _w33, _w25, _h);
-						
+
 						ofxSurfingHelpers::AddBigToggle(solo, _w100, _h50);
 
 						auto &_p = params_EditorEnablers[index];// ofAbstractParameter
@@ -970,7 +1097,7 @@ void ofxSurfingTween::draw_ImGui()
 
 			if (bShowOutputs)
 			{
-				name = "TWEENED";
+				name = "Parameters_TWEENED";
 				if (ofxImGui::BeginWindow(name.c_str(), mainSettings, flagsw))
 				{
 					//ofxSurfingHelpers::refreshImGui_WidgetsSizes(_spcx, _spcy, _w100, _h100, _w99, _w50, _w33, _w25, _h);
@@ -1010,6 +1137,10 @@ void ofxSurfingTween::addParam(ofAbstractParameter& aparam) {
 	bool isFloat = type == typeid(ofParameter<float>).name();
 	bool isInt = type == typeid(ofParameter<int>).name();
 	bool isBool = type == typeid(ofParameter<bool>).name();
+	//vec
+	bool isVec2 = type == typeid(ofParameter<glm::vec2>).name();
+	bool isVec3 = type == typeid(ofParameter<glm::vec3>).name();
+	bool isVec4 = type == typeid(ofParameter<glm::vec4>).name();
 
 	ofLogNotice() << __FUNCTION__ << " " << _name << " \t [ " << type << " ]";
 
@@ -1071,6 +1202,43 @@ void ofxSurfingTween::addParam(ofAbstractParameter& aparam) {
 		enablersForParams.push_back(b0);
 		params_EditorEnablers.add(b0);
 	}
+
+	//TODO:
+	//vec
+	else if (isVec2) {
+		ofParameter<glm::vec2> p = aparam.cast<glm::vec2>();
+		ofParameter<glm::vec2> _p{ _name + suffix, p.get(), p.getMin(), p.getMax() };
+		mParamsGroup_COPY.add(_p);
+
+		//-
+
+		ofParameter<bool> b0{ _name, true };
+		enablersForParams.push_back(b0);
+		params_EditorEnablers.add(b0);
+	}
+	else if (isVec3) {
+		ofParameter<glm::vec3> p = aparam.cast<glm::vec3>();
+		ofParameter<glm::vec3> _p{ _name + suffix, p.get(), p.getMin(), p.getMax() };
+		mParamsGroup_COPY.add(_p);
+
+		//-
+
+		ofParameter<bool> b0{ _name, true };
+		enablersForParams.push_back(b0);
+		params_EditorEnablers.add(b0);
+	}
+	else if (isVec4) {
+		ofParameter<glm::vec4> p = aparam.cast<glm::vec4>();
+		ofParameter<glm::vec4> _p{ _name + suffix, p.get(), p.getMin(), p.getMax() };
+		mParamsGroup_COPY.add(_p);
+
+		//-
+
+		ofParameter<bool> b0{ _name, true };
+		enablersForParams.push_back(b0);
+		params_EditorEnablers.add(b0);
+	}
+
 	else {
 	}
 
@@ -1093,7 +1261,7 @@ void ofxSurfingTween::setup(ofParameterGroup& aparams) {
 
 	//TODO:
 	//group COPY
-	mParamsGroup_COPY.setName(n + "_TWEEN");//name
+	mParamsGroup_COPY.setName(n + "_TWEENED");//name
 	//mParamsGroup_COPY.setName(n + suffix);//name
 
 	for (int i = 0; i < aparams.size(); i++) {
@@ -1135,16 +1303,28 @@ void ofxSurfingTween::add(ofParameterGroup aparams) {
 void ofxSurfingTween::add(ofParameter<float>& aparam) {
 	addParam(aparam);
 }
-
 //--------------------------------------------------------------
 void ofxSurfingTween::add(ofParameter<bool>& aparam) {
 	addParam(aparam);
 }
-
 //--------------------------------------------------------------
 void ofxSurfingTween::add(ofParameter<int>& aparam) {
 	addParam(aparam);
 }
+//--------------------------------------------------------------
+void ofxSurfingTween::add(ofParameter<glm::vec2>& aparam) {
+	addParam(aparam);
+}
+//--------------------------------------------------------------
+void ofxSurfingTween::add(ofParameter<glm::vec3>& aparam) {
+	addParam(aparam);
+}
+//--------------------------------------------------------------
+void ofxSurfingTween::add(ofParameter<glm::vec4>& aparam) {
+	addParam(aparam);
+}
+
+//--
 
 //--------------------------------------------------------------
 void ofxSurfingTween::Changed_Controls_Out(ofAbstractParameter &e)
@@ -1154,6 +1334,10 @@ void ofxSurfingTween::Changed_Controls_Out(ofAbstractParameter &e)
 	std::string name = e.getName();
 
 	ofLogVerbose(__FUNCTION__) << name << " : " << e;
+
+	if (enableLiveMode) {
+		doGo();
+	}
 }
 
 //------------
@@ -1191,6 +1375,21 @@ int ofxSurfingTween::get(ofParameter<int> &e) {
 		return -1;
 	}
 }
+
+////--------------------------------------------------------------
+//glm::vec2 ofxSurfingTween::get(ofParameter<glm::vec2> &e) {
+//	string name = e.getName();
+//	auto &p = mParamsGroup_COPY.get(name);
+//	if (p.type() == typeid(ofParameter<glm::vec2>).name())
+//	{
+//		return p.cast<glm::vec2>().get();
+//	}
+//	else
+//	{
+//		ofLogError(__FUNCTION__) << "Not expected type: " << name;
+//		return -1;
+//	}
+//}
 
 ////--------------------------------------------------------------
 //ofAbstractParameter& ofxSurfingTween::getParamAbstract(ofAbstractParameter &e) {
