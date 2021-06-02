@@ -185,6 +185,7 @@ private:
 	ofParameter<bool> bShowInputs;
 	ofParameter<bool> bShowOutputs;
 	ofParameter<bool> bShowHelp;
+	ofParameter<bool> bKeys;
 	ofParameter<bool> solo;
 	ofParameter<int> index;
 	ofParameter<bool> enableTween;

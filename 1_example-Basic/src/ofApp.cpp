@@ -61,7 +61,7 @@ void ofApp::update() {
 
 	// slowdown log a bit
 	static bool bDebug = true;
-	if (bDebug && ofGetFrameNum() % 6 == 0) 
+	if (bDebug && ofGetFrameNum() % 20 == 0) 
 	{
 		float _lineWidth = dataTween.get(lineWidth);
 		int _shapeType = dataTween.get(shapeType);

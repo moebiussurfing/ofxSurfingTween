@@ -525,6 +525,9 @@ void ofxSurfingTween::drawPlots(ofRectangle r) {
 
 //--------------------------------------------------------------
 void ofxSurfingTween::keyPressed(int key) {
+	if (!bKeys) return;
+
+	//-
 
 	if (key == 'h') bShowHelp = !bShowHelp;
 	if (key == 'g') bGui = !bGui;
@@ -532,7 +535,7 @@ void ofxSurfingTween::keyPressed(int key) {
 	if (key == OF_KEY_F1 || key == OF_KEY_BACKSPACE) doRandomize(false);
 	if (key == OF_KEY_F2) doGo();
 	if (key == OF_KEY_F3 || key == ' ') doRandomize(true);
-	if (key == OF_KEY_RETURN) bPlay = !bPlay;
+	if (key == OF_KEY_F4) bPlay = !bPlay;
 
 	if (key == 's') solo = !solo;
 	if (key == OF_KEY_UP) {
@@ -576,11 +579,14 @@ void ofxSurfingTween::setupParams() {
 	////    _outMinRange = 0;
 	////    _outMaxRange = 127;
 	////}
+	
+	rectangle_PlotsBg.bEditMode.setName("Edit Plots");
 
 	//params
 	params.setName("Surfing Tweener");
 	params.add(bGui);
-	params.add(index.set("index", 0, 0, 0));
+	params.add(bKeys.set("Keys", true));
+	params.add(index.set("Index", 0, 0, 0));
 	params.add(bPlay.set("PLAY", false));
 	params.add(playSpeed.set("Speed", 0.5, 0, 1));
 	params.add(enable.set("ENABLE", true));
@@ -622,11 +628,11 @@ void ofxSurfingTween::setupParams() {
 	s += "F1|BSPACE    :  RANDOMiZE"; s += "\n";
 	s += "F2           :  GO!"; s += "\n";
 	s += "F3|SPACE     :  RANDOMiZE+GO!"; s += "\n";
-	s += "RETURN       :  PLAY RANDOMiZER"; s += "\n";
+	s += "F4           :  PLAY RANDOMiZER"; s += "\n";
 	s += "\n";
 	s += "SOLO"; s += "\n";
 	s += "S            :  ENABLE SOLO"; s += "\n";
-	s += "Up|Down      :  BROWSE"; s += "\n";
+	s += "Up|Down      :  BROWSE PARAMS"; s += "\n";
 	helpInfo = s;
 }
 
@@ -784,11 +790,11 @@ void ofxSurfingTween::draw_ImGui()
 							doRandomize(false);
 						}
 
-						if (ImGui::Button("GO!", ImVec2(_w100, _h))) {
+						if (ImGui::Button("GO!", ImVec2(_w100, _h / 2))) {
 							doGo();
 						}
 
-						if (ImGui::Button("RANDOMiZE+GO", ImVec2(_w100, _h))) {
+						if (ImGui::Button("RANDOMiZE+GO", ImVec2(_w100, _h / 2))) {
 							doRandomize(true);
 						}
 
@@ -929,6 +935,7 @@ void ofxSurfingTween::draw_ImGui()
 						//ofxSurfingHelpers::refreshImGui_WidgetsSizes(_spcx, _spcy, _w100, _h100, _w99, _w50, _w33, _w25, _h);
 
 						ofxImGui::AddParameter(bShowHelp);
+						ofxImGui::AddParameter(bKeys);
 						ofxImGui::AddParameter(rectangle_PlotsBg.bEditMode);
 						ImGui::Dummy(ImVec2(0.0f, 2.0f));
 
