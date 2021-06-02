@@ -416,6 +416,17 @@ void ofxSurfingTween::doRandomize(bool bGo) {
 
 	for (int i = 0; i < mParamsGroup.size(); i++)
 	{
+		//apply only if enabled
+		auto &pe = params_EditorEnablers[i];
+		auto type = pe.type();
+		bool isBool = type == typeid(ofParameter<bool>).name();
+		if (isBool) {
+			ofParameter<bool> pb = pe.cast<bool>();
+			if (!pb.get()) continue;
+		}
+
+		//-
+
 		auto &p = mParamsGroup[i];
 
 		float v;
@@ -477,9 +488,11 @@ void ofxSurfingTween::doGo() {
 			outputs[i].to = vTo;
 		}
 
+		//--
+
 		//TODO: 
 		//BUG:
-		//params with multuiple floats. how to handle?
+		//params with multiple floats/multi dim. how to handle?
 
 		//vec
 		else if (isVec2)
