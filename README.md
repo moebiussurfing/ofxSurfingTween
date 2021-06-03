@@ -10,9 +10,6 @@ Powered with the _**awesome**_ [ofxAnimatable](https://github.com/armadillu/ofxA
 ## Screenshots
 <img src="docs/readme_images/Capture.PNG" width="100%" height="100%">
 
-### Animator Detail
-<img src="docs/readme_images/Capture2.PNG" width="30%" height="30%">
-
 ## Features
 - **Simple use**: Just pass your ```ofParameterGroup``` parameters container.
 - Another usable ```ofParameterGroup``` will be created with the same parameters cloned: but for the accesible tweened values.
@@ -28,6 +25,8 @@ Tween Engine with all the **ofxAnimatable** power:
 * **Play modes**: once, loop, back and forth, and play n times.
 * **Duration** Time (ms) scaled or **BPM MODE** divisions.
 * Plot preview and progress bars.
+
+<img src="docs/readme_images/Capture2.PNG" width="30%" height="30%">
 
 ## Workflow Usage
   1. Set the **Source** params that will be used as **Target** values (destination).
