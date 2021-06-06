@@ -24,6 +24,14 @@ void ofxSurfingTween::setup() {
 	path_Settings = path_Global + "ofxSurfingTween_Settings.xml";
 	ofxSurfingHelpers::CheckFolder(path_Global);
 
+
+	// default plots position
+	//ofRectangle r = ofGetCurrentViewport();
+	int w = 300;
+	int pad = 30;
+	ofRectangle r = ofRectangle(ofGetWidth() - w - 2 * pad, pad, w, ofGetHeight() - 2 * pad);
+	rectangle_PlotsBg.setRect(r.getX(), r.getY(), r.getWidth(), r.getHeight());
+
 	//-
 
 	setupParams();
@@ -56,7 +64,7 @@ void ofxSurfingTween::setup() {
 
 //--------------------------------------------------------------
 void ofxSurfingTween::startup() {
-	
+
 	//ofAddListener(mParamsGroup.parameterChangedE(), this, &ofxSurfingTween::Changed_ParamsInput);
 
 	bDISABLE_CALLBACKS = false;
@@ -913,10 +921,11 @@ void ofxSurfingTween::draw_ImGui()
 				// enable/bypass
 				ofxSurfingHelpers::AddBigToggle(enableTween, _w100, _h);
 				ofxSurfingHelpers::AddBigToggle(animator.SHOW_Gui, _w100, _h);
-				ofxSurfingHelpers::AddBigToggle(enableLiveMode, _w100, _h/2);
+				ofxSurfingHelpers::AddBigToggle(enableLiveMode, _w100, _h / 2);
 				if (enableTween)
 				{
 					ImGui::Dummy(ImVec2(0.0f, 2.0f));
+					ofxSurfingHelpers::AddBigToggle(bKeys, _w100, _h50);
 					ofxSurfingHelpers::AddBigToggle(bReset, _w100, _h50);
 
 					ImGui::Dummy(ImVec2(0.0f, 2.0f));
@@ -1075,7 +1084,6 @@ void ofxSurfingTween::draw_ImGui()
 						//ofxSurfingHelpers::refreshImGui_WidgetsSizes(_spcx, _spcy, _w100, _h100, _w99, _w50, _w33, _w25, _h);
 
 						ofxImGui::AddParameter(bShowHelp);
-						ofxImGui::AddParameter(bKeys);
 						ofxImGui::AddParameter(rectangle_PlotsBg.bEditMode);
 						ImGui::Dummy(ImVec2(0.0f, 2.0f));
 

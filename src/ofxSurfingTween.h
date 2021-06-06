@@ -24,7 +24,7 @@ TODO:
 #include "imgui.h"
 #include "imgui_internal.h"
 #include "ofxSurfingHelpers.h"
-#include "ofxSurfing_ImGuiBundle.h"
+#include "ofxSurfingImGui.h"
 #include "ofxSurfing_Timers.h"
 
 #define COLORS_MONCHROME // vs iterated hue
