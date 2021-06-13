@@ -17,14 +17,20 @@ TODO:
 */
 
 
+#define USE_SURFING_TWEENER__GUI_MANAGER
+//#define USE_SURFING_TWEENER__GUI_LOCAL
+
+//--
+
+
 #include "FloatAnimator.h"
 #include "ofxHistoryPlot.h"
 #include "ofxInteractiveRect.h"
-#include "ofxImGui.h"
-#include "imgui.h"
-#include "imgui_internal.h"
-#include "ofxSurfingHelpers.h"
 #include "ofxSurfingImGui.h"
+//#include "ofxImGui.h"
+//#include "imgui.h"
+//#include "imgui_internal.h"
+#include "ofxSurfingHelpers.h"
 #include "ofxSurfing_Timers.h"
 
 #define COLORS_MONCHROME // vs iterated hue
@@ -52,6 +58,43 @@ public:
 //--------------------------------------------------------------
 class ofxSurfingTween /*: public ofBaseApp*/ {
 
+	//----
+
+#ifdef USE_SURFING_TWEENER__GUI_MANAGER
+public:
+	ofxSurfing_ImGui_Manager ImGuiManager; // In MODE A ofxGui will be instatiated inside the class
+	// then you can simplify the ofxImGui setup procces and:
+	// - initialize ofxImGui 
+	// - speed up creation of windows and trees
+	// Also you use the ofxSurfing_ImGui_WidgetsTypes.h aka Types Engine Manager. 
+	// this class helps to populate responsive layouts or to define wich widget type to draw a typed parameter.
+	// then you can draw a float ofParameter as a slider, drag number or +/- stepped buttons.
+	// * hide a parameter of a group
+	// * define to draw in same line next param
+	// * define to add vertical spacing after the parameter
+
+	// MODE B
+	//ofxImGui::Gui gui; // can be instantiated outside the class (locally to maybe share with other classes)
+#endif
+
+	//--
+
+	void draw_ImGui();
+
+#ifdef USE_SURFING_TWEENER__GUI_LOCAL
+	// ImGui
+	void setup_ImGui();
+	bool bAutoDraw = true;
+	ofxImGui::Gui gui;
+	ofxImGui::Settings mainSettings = ofxImGui::Settings();
+	ImFont* customFont = nullptr;
+	ofParameter<bool> auto_resize{ "Auto Resize", true };
+	ofParameter<bool> bLockMouseByImGui{ "Mouse Locked", false };
+	ofParameter<bool> auto_lockToBorder{ "Lock GUI", false };
+#endif
+
+	//----
+
 public:
 	ofxSurfingTween();
 	~ofxSurfingTween();
@@ -69,12 +112,16 @@ public:
 	// required to set to false when only one ImGui instance is created
 	//--------------------------------------------------------------
 	void setImGuiAutodraw(bool b) {
+#ifdef USE_SURFING_TWEENER__GUI_LOCAL
 		bAutoDraw = b;
+#endif
 	}
 
 	//--------------------------------------------------------------
 	void setImGuiSharedMode(bool b) {
+#ifdef USE_SURFING_TWEENER__GUI_LOCAL
 		gui.setSharedMode(b); // Force shared context
+#endif
 	}
 
 	//--
@@ -212,19 +259,6 @@ private:
 
 	void doReset();
 	void setupParams();
-
-	//--
-
-	// ImGui
-	void setup_ImGui();
-	bool bAutoDraw = true;
-	void draw_ImGui();
-	ofxImGui::Gui gui;
-	ofxImGui::Settings mainSettings = ofxImGui::Settings();
-	ImFont* customFont = nullptr;
-	ofParameter<bool> auto_resize{ "Auto Resize", true };
-	ofParameter<bool> bLockMouseByImGui{ "Mouse Locked", false };
-	ofParameter<bool> auto_lockToBorder{ "Lock GUI", false };
 
 	//--
 

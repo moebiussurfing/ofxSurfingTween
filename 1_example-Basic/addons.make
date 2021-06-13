@@ -5,5 +5,6 @@ ofxImGui
 ofxScaleDragRect
 ofxSurfingAnimators
 ofxSurfingHelpers
+ofxSurfingImGui
 ofxSurfingTween
 ofxWindowApp

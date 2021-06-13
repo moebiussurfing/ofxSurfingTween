@@ -4,10 +4,15 @@
 void ofApp::setup() {
 
 	// Workflow
-	// 1. the addon will clone all the (sources) params to new ones (targets).
-	// 2. we will set the source params first.
-	// 3. we will set the animation: duration, pre pause, curve tween etc..
-	// 4. we will trig GO! to tween the targets params to these sources params.
+	// 1. The addon will clone all the params (sources) to new ones (targets).
+	// 2. We will prepare the source params first.
+	// 3. We will configure the animation: 
+	//		duration, pre pause, curve tween etc... 
+	//		This defines the tween speed, curve..
+	// 4. Then, we will trig GO! 
+	//		To tween the targets params to these sources params previously setted.
+	// 5. Tweening starts and goes to the targets values 
+	//		(for all the registered parameters.)
 
 	params.setName("paramsGroup");// main container
 	params.add(lineWidth.set("lineWidth", 0.5, 0, 1));
@@ -32,18 +37,15 @@ void ofApp::setup() {
 
 	//--
 
-	// local gui
-	ofxSurfingHelpers::setThemeDark_ofxGui();
-
 	// input
 	guiSource.setup("Source"); // source
 	guiSource.add(params);
-	guiSource.setPosition(10, 600);
+	guiSource.setPosition(10, 650);
 
 	// output
 	guiTween.setup("Target"); // tweened
 	guiTween.add(dataTween.getParamsSmoothed());
-	guiTween.setPosition(220, 600);
+	guiTween.setPosition(220, 650);
 }
 
 //--------------------------------------------------------------
@@ -60,7 +62,7 @@ void ofApp::update() {
 	// simple getters
 
 	// slowdown log a bit
-	static bool bDebug = true;
+	static bool bDebug = bGui;
 	if (bDebug && ofGetFrameNum() % 20 == 0) 
 	{
 		float _lineWidth = dataTween.get(lineWidth);

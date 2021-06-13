@@ -4,9 +4,8 @@
 
 #include "ofxSurfingTween.h"
 
-#include "ofxGui.h"//only to local gui
-#include "ofxSurfing_ofxGui.h"//only to set theme
-#include "ofxWindowApp.h"//only to handle window
+#include "ofxGui.h" // only to local gui
+#include "ofxWindowApp.h" // only to handle window
 
 class ofApp : public ofBaseApp{
 
