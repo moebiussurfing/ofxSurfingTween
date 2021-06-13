@@ -7,9 +7,11 @@
 
 TODO:
 
++ fix plotting / output when smooth disabled
 ++ avoid crash to unsuported types
 ++ add colors types, vectors, using templates..
 
++ use ofxParameterCololection
 + "real" nested sub-groups tree levels.. ?
 + add param to calibrate max history smooth/speed.. ?
 + plotting int type should be stepped/not continuous.. ?
@@ -62,7 +64,7 @@ class ofxSurfingTween /*: public ofBaseApp*/ {
 
 #ifdef USE_SURFING_TWEENER__GUI_MANAGER
 public:
-	ofxSurfing_ImGui_Manager ImGuiManager; // In MODE A ofxGui will be instatiated inside the class
+	ofxSurfing_ImGui_Manager guiManager; // In MODE A ofxGui will be instatiated inside the class
 	// then you can simplify the ofxImGui setup procces and:
 	// - initialize ofxImGui 
 	// - speed up creation of windows and trees

@@ -5,7 +5,7 @@
 #include "ofxSurfingTween.h"
 
 #include "ofxGui.h" // only to local gui
-#include "ofxWindowApp.h" // only to handle window
+#include "ofxWindowApp.h" // only to handle window settings
 
 class ofApp : public ofBaseApp{
 

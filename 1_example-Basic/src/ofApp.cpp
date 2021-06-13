@@ -4,15 +4,18 @@
 void ofApp::setup() {
 
 	// Workflow
+	//
 	// 1. The addon will clone all the params (sources) to new ones (targets).
-	// 2. We will prepare the source params first.
-	// 3. We will configure the animation: 
-	//		duration, pre pause, curve tween etc... 
-	//		This defines the tween speed, curve..
-	// 4. Then, we will trig GO! 
+	// 2. Before trig the tween:
+	//		We will prepare the source params first.
 	//		To tween the targets params to these sources params previously setted.
+	// 3. We will configure the animation: 
+	//		This defines the tween duration, speed, pre-pause, curve tween.. 
+	// 4. Then, we trig the transition. GO! 
 	// 5. Tweening starts and goes to the targets values 
 	//		(for all the registered parameters.)
+
+	//-
 
 	params.setName("paramsGroup");// main container
 	params.add(lineWidth.set("lineWidth", 0.5, 0, 1));
@@ -21,21 +24,23 @@ void ofApp::setup() {
 	params.add(shapeType.set("shapeType", 0, -50, 50));
 	params.add(size.set("size", 100, 0, 100));
 	params.add(amount.set("amount", 10, 0, 25));
-	params2.setName("paramsGroup2");// nested
-	params3.setName("paramsGroup3");// nested
-	params2.add(shapeType2.set("shapeType2", 0, -50, 50));
-	params2.add(size2.set("size2", 100, 0, 100));
-	params2.add(amount2.set("amount2", 10, 0, 25));
-	params3.add(lineWidth3.set("lineWidth3", 0.5, 0, 1));
-	params3.add(separation3.set("separation3", 50, 1, 100));
-	params3.add(speed3.set("speed3", 0.5, 0, 1));
-	params2.add(params3);
-	params.add(params2);
+	//params2.setName("paramsGroup2");// nested
+	//params3.setName("paramsGroup3");// nested
+	//params2.add(shapeType2.set("shapeType2", 0, -50, 50));
+	//params2.add(size2.set("size2", 100, 0, 100));
+	//params2.add(amount2.set("amount2", 10, 0, 25));
+	//params3.add(lineWidth3.set("lineWidth3", 0.5, 0, 1));
+	//params3.add(separation3.set("separation3", 50, 1, 100));
+	//params3.add(speed3.set("speed3", 0.5, 0, 1));
+	//params2.add(params3);
+	//params.add(params2);
 
 	// tweener
 	dataTween.setup(params);
 
 	//--
+
+	// local debug gui
 
 	// input
 	guiSource.setup("Source"); // source
@@ -62,8 +67,7 @@ void ofApp::update() {
 	// simple getters
 
 	// slowdown log a bit
-	static bool bDebug = bGui;
-	if (bDebug && ofGetFrameNum() % 20 == 0) 
+	if (bGui && ofGetFrameNum() % 20 == 0)
 	{
 		float _lineWidth = dataTween.get(lineWidth);
 		int _shapeType = dataTween.get(shapeType);

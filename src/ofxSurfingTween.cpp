@@ -59,7 +59,7 @@ void ofxSurfingTween::setup() {
 #endif
 
 #ifdef USE_SURFING_TWEENER__GUI_MANAGER
-	ImGuiManager.setup();
+	guiManager.setup();
 #endif
 
 	//--
@@ -199,13 +199,13 @@ void ofxSurfingTween::updateSmooths() {
 
 		// 1. toggle enabler
 
-		auto &_p = params_EditorEnablers[i];// ofAbstractParameter
+		auto &_p = params_EditorEnablers[i]; // ofAbstractParameter
 		auto type = _p.type();
 		bool isBool = type == typeid(ofParameter<bool>).name();
 		string name = _p.getName();
 		ofParameter<bool> _bSmooth = _p.cast<bool>();
 
-		//vec
+		// vec
 		bool isVec2 = type == typeid(ofParameter<glm::vec2>).name();
 		bool isVec3 = type == typeid(ofParameter<glm::vec3>).name();
 		bool isVec4 = type == typeid(ofParameter<glm::vec4>).name();
@@ -216,7 +216,7 @@ void ofxSurfingTween::updateSmooths() {
 
 		//string str = "";
 		//string name = aparam.getName();
-		float vn = 0;//normalized params
+		float vn = 0; // normalized params
 
 		if (p.type() == typeid(ofParameter<float>).name()) {
 			ofParameter<float> _p = p.cast<float>();
@@ -253,7 +253,7 @@ void ofxSurfingTween::updateSmooths() {
 			ofParameter<bool> ti = p.cast<bool>();
 		}
 
-		//vec
+		// vec
 		else if (isVec2) {
 			ofParameter<ofDefaultVec2> _p = p.cast<ofDefaultVec2>();
 			float v1 = ofMap(_p.get().x, _p.getMin().x, _p.getMax().x, 0, 1, true);
@@ -336,7 +336,7 @@ void ofxSurfingTween::updateEngine() {
 	for (int i = 0; i < NUM_VARS; i++)
 	{
 		// toggle
-		auto &p = params_EditorEnablers[i];// ofAbstractParameter
+		auto &p = params_EditorEnablers[i]; // ofAbstractParameter
 		auto type = p.type();
 		bool isBool = type == typeid(ofParameter<bool>).name();
 		string name = p.getName();
@@ -347,12 +347,12 @@ void ofxSurfingTween::updateEngine() {
 		// input
 		//float _input = ofClamp(inputs[i], minInput, maxInput);
 		float _input = inputs[i];
-		if (bShowPlots) plots[2 * i]->update(_input);//source
+		if (bShowPlots) plots[2 * i]->update(_input); // source
 
 		// output
 		if (bShowPlots) {
-			if (enableTween && _bSmooth) plots[2 * i + 1]->update(outputs[i].getValue());//filtered
-			else plots[2 * i + 1]->update(_input);//source
+			if (enableTween && _bSmooth) plots[2 * i + 1]->update(outputs[i].getValue()); // filtered
+			else plots[2 * i + 1]->update(_input); // source
 		}
 
 		// solo
@@ -743,6 +743,7 @@ void ofxSurfingTween::setupParams() {
 	solo.setSerializable(false);
 	bReset.setSerializable(false);
 	enableLiveMode.setSerializable(false);
+	bPlay.setSerializable(false);
 
 	ofAddListener(params.parameterChangedE(), this, &ofxSurfingTween::Changed_Params); // setup()
 
@@ -876,288 +877,13 @@ void ofxSurfingTween::setup_ImGui()
 }
 #endif
 
-/*
-#ifdef USE_SURFING_TWEENER__GUI_LOCAL
-//--------------------------------------------------------------
-void ofxSurfingTween::draw_ImGui()
-{
-	gui.begin();
-	{
-		ImGui::PushFont(customFont);
-		ImGui::PushStyleVar(ImGuiStyleVar_WindowMinSize, ImVec2(ww, hh));
-
-		bLockMouseByImGui = false;
-
-		//panels sizes
-		float xx = 10;
-		float yy = 10;
-		float ww = PANEL_WIDGETS_WIDTH;
-		float hh = 20;
-		//float hh = PANEL_WIDGETS_HEIGHT;
-
-		//widgets sizes
-		float _spcx;
-		float _spcy;
-		float _w100;
-		float _h100;
-		float _w99;
-		float _w50;
-		float _w33;
-		float _w25;
-
-		float _h;
-		ofxImGuiSurfing::refreshImGui_WidgetsSizes(_w100, _w50, _w33, _w25, _h);
-		float _h50 = _h / 2;
-
-		mainSettings = ofxImGuiSurfing::Settings();
-
-		ImGuiWindowFlags flagsw = auto_resize ? ImGuiWindowFlags_AlwaysAutoResize : ImGuiWindowFlags_None;
-
-		//flagsw |= ImGuiCond_FirstUseEver;
-		//if (auto_lockToBorder) flagsw |= ImGuiCond_Always;
-		//else flagsw |= ImGuiCond_FirstUseEver;
-		//ImGui::SetNextWindowSize(ImVec2(ww, hh), flagsw);
-		//ImGui::SetNextWindowPos(ImVec2(xx, yy), flagsw);
-
-		{
-			std::string n = "TWEEN SURFER";
-			if (ofxImGuiSurfing::BeginWindow(n.c_str(), mainSettings, flagsw))
-			{
-				ofxImGuiSurfing::refreshImGui_WidgetsSizes(_w100, _w50, _w33, _w25, _h);
-
-				ImGuiTreeNodeFlags _flagt;
-				_flagt = ImGuiTreeNodeFlags_None;
-				_flagt = ImGuiTreeNodeFlags_DefaultOpen;
-
-				// enable/bypass
-				ofxImGuiSurfing::AddBigToggle(enableTween, _w100, _h);
-				ofxImGuiSurfing::AddBigToggle(animator.SHOW_Gui, _w100, _h);
-				ofxImGuiSurfing::AddBigToggle(enableLiveMode, _w100, _h / 2);
-				if (enableTween)
-				{
-					ImGui::Dummy(ImVec2(0.0f, 2.0f));
-					ofxImGuiSurfing::AddBigToggle(bKeys, _w100, _h50);
-					ofxImGuiSurfing::AddBigToggle(bReset, _w100, _h50);
-
-					ImGui::Dummy(ImVec2(0.0f, 2.0f));
-				}
-
-				if (enableTween)
-				{
-					if (ImGui::CollapsingHeader("ACTIONS", _flagt))
-					{
-						if (ImGui::Button("RANDOMiZE", ImVec2(_w100, _h / 2))) {
-							doRandomize(false);
-						}
-
-						if (ImGui::Button("GO!", ImVec2(_w100, _h / 2))) {
-							doGo();
-						}
-
-						if (ImGui::Button("RANDOMiZE+GO", ImVec2(_w100, _h / 2))) {
-							doRandomize(true);
-						}
-
-						//blink by timer
-						bool b = bPlay;
-						float a;
-						if (b) a = 1 - tn;
-						//if (b) a = ofxSurfingHelpers::getFadeBlink();
-						else a = 1.0f;
-						if (b) ImGui::PushStyleColor(ImGuiCol_Border, (ImVec4)ImColor::HSV(0.5f, 0.0f, 1.0f, 0.5 * a));
-						ofxImGuiSurfing::AddBigToggle(bPlay, _w100, _h / 2, false);
-						if (b) ImGui::PopStyleColor();
-						if (bPlay) {
-							//ImGui::SliderFloat("Speed", &playSpeed, 0, 1);
-							ofxImGuiSurfing::AddParameter(playSpeed);
-							//ImGui::ProgressBar(tn);
-						}
-					}
-					ImGui::Dummy(ImVec2(0.0f, 2.0f));
-				}
-
-				//-
-
-				if (enableTween)
-				{
-					bool bOpen;
-					ImGuiWindowFlags _flagw;
-					bOpen = false;
-					_flagw = (bOpen ? ImGuiWindowFlags_NoCollapse : ImGuiWindowFlags_None);
-
-					if (ImGui::CollapsingHeader("PANELS", _flagw))
-					{
-						ImGui::Indent();
-						ofxImGuiSurfing::refreshImGui_WidgetsSizes(_w100, _w50, _w33, _w25, _h);
-
-						//ImGui::Text("Panels:");
-						ImGui::PushID(1);
-						ofxImGuiSurfing::AddBigToggle(animator.SHOW_Gui, _w100, _h50);
-						ImGui::PopID();
-
-						ofxImGuiSurfing::AddBigToggle(bShowInputs, _w50, _h50); ImGui::SameLine();
-						ofxImGuiSurfing::AddBigToggle(bShowOutputs, _w50, _h50);
-
-						ofxImGuiSurfing::AddBigToggle(bShowPlots, _w50, _h50); ImGui::SameLine();
-						ofxImGuiSurfing::AddBigToggle(bFullScreen, _w50, _h50);
-
-						ImGui::Unindent();
-					}
-
-					//----
-
-					// enable toggles
-
-					bOpen = false;
-					_flagw = (bOpen ? ImGuiWindowFlags_NoCollapse : ImGuiWindowFlags_None);
-
-					if (ImGui::CollapsingHeader("ENABLE PARAMETERS", _flagw))
-					{
-						ofxImGuiSurfing::refreshImGui_WidgetsSizes(_w100, _w50, _w33, _w25, _h);
-
-						//ImGui::Text("ENABLE PARAMETERS");
-
-						static bool bNone, bAll;
-						if (ImGui::Button("NONE", ImVec2(_w50, _h / 2)))
-						{
-							doDisableAll();
-						}
-						ImGui::SameLine();
-						if (ImGui::Button("ALL", ImVec2(_w50, _h / 2)))
-						{
-							doEnableAll();
-						}
-						ImGui::Dummy(ImVec2(0.0f, 2.0f));
-
-						for (int i = 0; i < params_EditorEnablers.size(); i++)
-						{
-							auto &p = params_EditorEnablers[i];// ofAbstractParameter
-							auto type = p.type();
-							bool isBool = type == typeid(ofParameter<bool>).name();
-							//bool isGroup = type == typeid(ofParameterGroup).name();
-							//bool isFloat = type == typeid(ofParameter<float>).name();
-							//bool isInt = type == typeid(ofParameter<int>).name();
-							string name = p.getName();
-
-							if (isBool)//just in case... 
-							{
-								// 1. toggle enable
-								ofParameter<bool> pb = p.cast<bool>();
-								ofxImGuiSurfing::AddBigToggle(pb, _w100, _h / 2, false);
-								//ImGui::SameLine();
-							}
-						}
-					}
-					//ImGui::Dummy(ImVec2(0.0f, 5.0f));
-
-					//-
-
-					bOpen = false;
-					ImGuiTreeNodeFlags _flagt = (bOpen ? ImGuiTreeNodeFlags_DefaultOpen : ImGuiTreeNodeFlags_None);
-
-					//TODO:
-					//plots
-					//ofxSurfingHelpers::AddPlot(input);
-					//ofxSurfingHelpers::AddPlot(output);
-
-					if (ImGui::CollapsingHeader("MONITOR", _flagt))
-					{
-						ofxImGuiSurfing::refreshImGui_WidgetsSizes(_w100, _w50, _w33, _w25, _h);
-
-						ofxImGuiSurfing::AddBigToggle(solo, _w100, _h50);
-
-						auto &_p = params_EditorEnablers[index];// ofAbstractParameter
-						string name = _p.getName();
-						ImGui::Text(name.c_str());
-
-						if (ofxImGuiSurfing::AddStepper(index)) {
-							index = ofClamp(index, index.getMin(), index.getMax());
-						}
-						ofxImGuiSurfing::AddParameter(index);
-						ofxImGuiSurfing::AddParameter(input);
-						ofxImGuiSurfing::AddParameter(output);
-						//ImGui::Dummy(ImVec2(0.0f, 2.0f));
-						ImGui::Dummy(ImVec2(0.0f, 2.0f));
-					}
-					//}
-
-					//--
-
-					//mouse lockers
-
-					bLockMouseByImGui = bLockMouseByImGui | ImGui::IsWindowHovered(ImGuiHoveredFlags_AnyWindow);
-					bLockMouseByImGui = bLockMouseByImGui | ImGui::IsWindowHovered(ImGuiHoveredFlags_RootAndChildWindows);
-					bLockMouseByImGui = bLockMouseByImGui | ImGui::IsWindowHovered(ImGuiHoveredFlags_AllowWhenBlockedByActiveItem);
-
-					ImGui::Dummy(ImVec2(0.0f, 2.0f));
-					if (ImGui::CollapsingHeader("ADVANCED"))
-					{
-						//ofxImGuiSurfing::refreshImGui_WidgetsSizes(_w100, _w50, _w33, _w25, _h);
-
-						ofxImGuiSurfing::AddParameter(bShowHelp);
-						ofxImGuiSurfing::AddParameter(rectangle_PlotsBg.bEditMode);
-						ImGui::Dummy(ImVec2(0.0f, 2.0f));
-
-						ofxImGuiSurfing::AddParameter(auto_resize);
-						ofxImGuiSurfing::AddParameter(bLockMouseByImGui);
-					}
-				}
-			}
-			ofxImGuiSurfing::EndWindow(mainSettings);
-
-			//----
-
-			//flagsw |= ImGuiWindowFlags_NoCollapse;
-
-			string name;
-
-			if (bShowInputs)
-			{
-				name = "SOURCES";
-				if (ofxImGuiSurfing::BeginWindow(name.c_str(), mainSettings, flagsw))
-				{
-					//ofxImGuiSurfing::refreshImGui_WidgetsSizes(_w100, _w50, _w33, _w25, _h);
-
-					ImGuiTreeNodeFlags flags = ImGuiTreeNodeFlags_None;
-					flags |= ImGuiTreeNodeFlags_DefaultOpen;
-					ofxImGuiSurfing::AddGroup(mParamsGroup, flags);
-				}
-				ofxImGuiSurfing::EndWindow(mainSettings);
-			}
-
-			//-
-
-			if (bShowOutputs)
-			{
-				name = "Parameters_TWEENED";
-				if (ofxImGuiSurfing::BeginWindow(name.c_str(), mainSettings, flagsw))
-				{
-					//ofxImGuiSurfing::refreshImGui_WidgetsSizes(_w100, _w50, _w33, _w25, _h);
-
-					ImGuiTreeNodeFlags flags = ImGuiTreeNodeFlags_None;
-					flags |= ImGuiTreeNodeFlags_DefaultOpen;
-					ofxImGuiSurfing::AddGroup(mParamsGroup_COPY, flags);
-				}
-				ofxImGuiSurfing::EndWindow(mainSettings);
-			}
-		}
-		ImGui::PopStyleVar();
-		ImGui::PopFont();
-	}
-	gui.end();
-
-	//gui.draw();
-}
-#endif
-*/
-
 //----
 
 #ifdef USE_SURFING_TWEENER__GUI_MANAGER
 //--------------------------------------------------------------
 void ofxSurfingTween::draw_ImGui()
 {
-	ImGuiManager.begin(); // global begin
+	guiManager.begin(); // global begin
 	{
 		// widgets sizes
 		float _w100;
@@ -1173,11 +899,11 @@ void ofxSurfingTween::draw_ImGui()
 		bOpen = false;
 		ImGuiWindowFlags _flagw;
 		_flagw = (bOpen ? ImGuiWindowFlags_NoCollapse : ImGuiWindowFlags_None);
-		if (ImGuiManager.bAutoResize) _flagw |= ImGuiWindowFlags_AlwaysAutoResize;
+		if (guiManager.bAutoResize) _flagw |= ImGuiWindowFlags_AlwaysAutoResize;
 
 		{
 			n = "TWEEN SURFER";
-			ImGuiManager.beginWindow(n.c_str(), NULL, _flagw);
+			guiManager.beginWindow(n.c_str(), NULL, _flagw);
 			{
 				ofxImGuiSurfing::refreshImGui_WidgetsSizes(_w100, _w50, _w33, _w25, _h);
 
@@ -1188,10 +914,11 @@ void ofxSurfingTween::draw_ImGui()
 				// enable / bypass
 				ofxImGuiSurfing::AddBigToggle(enableTween, _w100, _h);
 				ofxImGuiSurfing::AddBigToggle(animator.SHOW_Gui, _w100, _h);
-				ofxImGuiSurfing::AddBigToggle(enableLiveMode, _w100, _h / 2);
+				ImGui::Dummy(ImVec2(0.0f, 2.0f));
+
 				if (enableTween)
 				{
-					ImGui::Dummy(ImVec2(0.0f, 2.0f));
+					ofxImGuiSurfing::AddBigToggle(enableLiveMode, _w100, _h / 2);
 					ofxImGuiSurfing::AddBigToggle(bKeys, _w100, _h50);
 					ofxImGuiSurfing::AddBigToggle(bReset, _w100, _h50);
 					ImGui::Dummy(ImVec2(0.0f, 2.0f));
@@ -1236,7 +963,7 @@ void ofxSurfingTween::draw_ImGui()
 					//bOpen = false;
 					//_flagw = (bOpen ? ImGuiWindowFlags_NoCollapse : ImGuiWindowFlags_None);
 
-					if (ImGui::CollapsingHeader("PANELS", _flagw))
+					if (ImGui::CollapsingHeader("PANELS", _flagt))
 					{
 						ImGui::Indent();
 						ofxImGuiSurfing::refreshImGui_WidgetsSizes(_w100, _w50, _w33, _w25, _h);
@@ -1258,7 +985,7 @@ void ofxSurfingTween::draw_ImGui()
 					//bOpen = false;
 					//_flagw = (bOpen ? ImGuiWindowFlags_NoCollapse : ImGuiWindowFlags_None);
 
-					if (ImGui::CollapsingHeader("ENABLE PARAMETERS", _flagw))
+					if (ImGui::CollapsingHeader("ENABLE PARAMETERS", _flagt))
 					{
 						ofxImGuiSurfing::refreshImGui_WidgetsSizes(_w100, _w50, _w33, _w25, _h);
 
@@ -1327,7 +1054,9 @@ void ofxSurfingTween::draw_ImGui()
 					}
 
 					ImGui::Dummy(ImVec2(0.0f, 2.0f));
-					if (ImGui::CollapsingHeader("EXTRA"))
+					ofxImGuiSurfing::AddToggleRoundedButton(guiManager.bExtra);
+					if (guiManager.bExtra)
+						//if (ImGui::CollapsingHeader("EXTRA"))
 					{
 						ofxImGuiSurfing::AddParameter(bShowHelp);
 						ofxImGuiSurfing::AddParameter(rectangle_PlotsBg.bEditMode);
@@ -1335,11 +1064,11 @@ void ofxSurfingTween::draw_ImGui()
 
 						//-
 
-						ImGuiManager.drawAdvancedSubPanel();
+						guiManager.drawAdvancedSubPanel();
 					}
 				}
 			}
-			ImGuiManager.endWindow();
+			guiManager.endWindow();
 
 			//----
 
@@ -1348,14 +1077,14 @@ void ofxSurfingTween::draw_ImGui()
 				//bOpen = false;
 				//_flagw = (bOpen ? ImGuiWindowFlags_NoCollapse : ImGuiWindowFlags_None);
 
-				n = "SOURCES";
-				ImGuiManager.beginWindow(n.c_str(), NULL, _flagw);
+				n = "Parameters_SOURCES";
+				guiManager.beginWindow(n.c_str(), NULL, _flagw);
 				{
 					ImGuiTreeNodeFlags flags = ImGuiTreeNodeFlags_None;
 					flags |= ImGuiTreeNodeFlags_DefaultOpen;
 					ofxImGuiSurfing::AddGroup(mParamsGroup, flags);
 				}
-				ImGuiManager.endWindow();
+				guiManager.endWindow();
 			}
 
 			//-
@@ -1366,17 +1095,17 @@ void ofxSurfingTween::draw_ImGui()
 				//_flagw = (bOpen ? ImGuiWindowFlags_NoCollapse : ImGuiWindowFlags_None);
 
 				n = "Parameters_TWEENED";
-				ImGuiManager.beginWindow(n.c_str(), NULL, _flagw);
+				guiManager.beginWindow(n.c_str(), NULL, _flagw);
 				{
 					ImGuiTreeNodeFlags flags = ImGuiTreeNodeFlags_None;
 					flags |= ImGuiTreeNodeFlags_DefaultOpen;
 					ofxImGuiSurfing::AddGroup(mParamsGroup_COPY, flags);
 				}
-				ImGuiManager.endWindow();
+				guiManager.endWindow();
 			}
 		}
 	}
-	ImGuiManager.end(); // global end
+	guiManager.end(); // global end
 }
 #endif
 
