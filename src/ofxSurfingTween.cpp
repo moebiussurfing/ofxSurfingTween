@@ -978,7 +978,6 @@ void ofxSurfingTween::draw_ImGui()
 
 					ofxImGuiSurfing::AddBigToggle(animator.SHOW_Gui, _w100, _h);
 
-
 #ifdef USE_SURFING_PRESETS
 					presets.draw_ImGui_Minimal();
 					ofxImGuiSurfing::AddToggleRoundedButton(presets.bGui);
