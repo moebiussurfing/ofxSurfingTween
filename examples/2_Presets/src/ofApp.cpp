@@ -2,6 +2,7 @@
 
 //--------------------------------------------------------------
 void ofApp::setup() {
+	ofSetCircleResolution(200);
 
 	//
 	// Workflow
@@ -19,23 +20,12 @@ void ofApp::setup() {
 
 	//-
 
-	params.setName("paramsGroup");// main container
-	params.add(lineWidth.set("lineWidth", 0.5, 0, 1));
-	params.add(separation.set("separation", 50, 1, 100));
-	params.add(speed.set("speed", 0.5, 0, 1));
-	params.add(shapeType.set("shapeType", 0, -50, 50));
-	params.add(size.set("size", 100, 0, 100));
-	params.add(amount.set("amount", 10, 0, 25));
-	//params2.setName("paramsGroup2");// nested
-	//params3.setName("paramsGroup3");// nested
-	//params2.add(shapeType2.set("shapeType2", 0, -50, 50));
-	//params2.add(size2.set("size2", 100, 0, 100));
-	//params2.add(amount2.set("amount2", 10, 0, 25));
-	//params3.add(lineWidth3.set("lineWidth3", 0.5, 0, 1));
-	//params3.add(separation3.set("separation3", 50, 1, 100));
-	//params3.add(speed3.set("speed3", 0.5, 0, 1));
-	//params2.add(params3);
-	//params.add(params2);
+	params.setName("paramsGroup"); // main container
+	params.add(sizef.set("sizef", 1, 0, 2));
+	params.add(speedf.set("speedf", 1, 0, 2));
+	params.add(rotationOffset.set("rotationOffset", 180, 0, 360));
+	params.add(minSize.set("minSize", ofGetHeight() * 0.5, 0, ofGetHeight() * 0.25));
+	params.add(shapeType.set("shapeType", 0, 0, 1));
 
 	// tweener
 	dataTween.setup(params);
@@ -59,11 +49,11 @@ void ofApp::setup() {
 void ofApp::update() {
 
 	/*
-	
+
 	NOTE:
 	learn how to access the tweened parameters.
 	notice that we can't overwrite the tween on the source parameters!
-	
+
 	*/
 
 	// simple getters
@@ -71,18 +61,20 @@ void ofApp::update() {
 	// slowdown log a bit
 	if (bGui && ofGetFrameNum() % 20 == 0)
 	{
-		float _lineWidth = dataTween.get(lineWidth);
-		int _shapeType = dataTween.get(shapeType);
-		int _size = dataTween.get(size);
-		int _amount = dataTween.get(amount);
+		float _sizef = dataTween.get(sizef);
+		float _speedf = dataTween.get(speedf);
+		float _rotationOffset = dataTween.get(rotationOffset);
+		float _minSize = dataTween.get(minSize);
+		float _shapeType = dataTween.get(shapeType);
 
 		// log
 		string sp = "  \t  ";
 		string str = "TWEENED >" + sp;
-		str += lineWidth.getName() + ":" + ofToString(_lineWidth, 2); str += sp;
+		str += sizef.getName() + ":" + ofToString(_sizef, 2); str += sp;
+		str += speedf.getName() + ":" + ofToString(_speedf); str += sp;
+		str += rotationOffset.getName() + ":" + ofToString(_rotationOffset); str += sp;
+		str += minSize.getName() + ":" + ofToString(_minSize); str += sp;
 		str += shapeType.getName() + ":" + ofToString(_shapeType); str += sp;
-		str += size.getName() + ":" + ofToString(_size); str += sp;
-		str += amount.getName() + ":" + ofToString(_amount); str += sp;
 		ofLogNotice(__FUNCTION__) << str;
 	}
 }
@@ -94,6 +86,52 @@ void ofApp::draw() {
 		guiSource.draw();
 		guiTween.draw();
 	}
+
+	drawScene();
+}
+
+//--------------------------------------------------------------
+void ofApp::drawScene()
+{
+	// get tweened variables
+	float _sizef = dataTween.get(sizef);
+	float _speedf = dataTween.get(speedf);
+	float _rotationOffset = dataTween.get(rotationOffset);
+	float _minSize = dataTween.get(minSize);
+
+	//-
+
+	// code from @Daandelange > https://github.com/Daandelange/ofxImGui/tree/master/example-sharedcontext
+
+	ofParameter<ofFloatColor> background{ "Background", ofFloatColor::black };
+	ofParameter<ofFloatColor> foreground{ "Foreground", ofFloatColor::grey };
+	ImVec4 color = { 1,1,1,1 };
+
+	ofSetColor(color.x * 255, color.y * 255, color.z * 255, color.w * 255);
+	float _scale = 0.2f;
+	ofDrawCircle(ofGetWidth()*0.5f, ofGetHeight()*0.5f, ofGetHeight()*_scale*_sizef*((fmod(1*_speedf, 1.f) - 0.5f)*2.f));
+	//ofDrawCircle(ofGetWidth()*.5f, ofGetHeight()*.5f, ofGetHeight()*.5f*_sizef*((fmod(ofGetElapsedTimef()*_speedf, 1.f) - 0.5f)*2.f));
+
+	float _scale2 = 0.2f;
+	float staticAnimationPos = ((cos(1*TWO_PI*_speedf)));
+	//float staticAnimationPos = ((cos(ofGetElapsedTimef()*TWO_PI*_speedf)));
+	//int rectSize = _minSize + abs((((ofGetHeight() - _minSize)*_sizef))*(staticAnimationPos));
+	int rectSize = _minSize + abs((((ofGetHeight() * _scale2 - _minSize)*_sizef))*(staticAnimationPos));
+
+	ofPushMatrix();
+	ofTranslate(ofGetWidth()*.5f, ofGetHeight()*.5f);
+
+	ofRotateDeg((-_rotationOffset * (staticAnimationPos)));
+	ofSetColor(background->r * 255, background->g * 255, background->b * 255, background->a * 255);
+	ofDrawRectangle(-rectSize * .5f, -rectSize * .5f, rectSize, rectSize);
+	ofRotateDeg(_rotationOffset*(staticAnimationPos));
+	ofSetColor(color.x * 255, color.y * 255, color.z * 255, color.w * 255);
+	ofDrawRectangle(-rectSize * .5f, -rectSize * .5f, rectSize, rectSize);
+	ofRotateDeg(_rotationOffset*(staticAnimationPos));
+	ofSetColor(foreground->r * 255, foreground->g * 255, foreground->b * 255, foreground->a * 255);
+	ofDrawRectangle(-rectSize * .5f, -rectSize * .5f, rectSize, rectSize);
+	
+	ofPopMatrix();
 }
 
 //--------------------------------------------------------------

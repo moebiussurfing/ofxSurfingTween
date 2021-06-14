@@ -13,26 +13,17 @@ class ofApp : public ofBaseApp{
 		void setup();
 		void update();
 		void draw();
+		void drawScene();
 		void keyPressed(int key);
 
 		ofxSurfingTween dataTween;
 
 		ofParameterGroup params;
-		ofParameter<float> lineWidth;
-		ofParameter<float> separation;
-		ofParameter<float> speed;
+		ofParameter<float> sizef;
+		ofParameter<float> speedf;
+		ofParameter<float> rotationOffset;
+		ofParameter<int> minSize;
 		ofParameter<int> shapeType;
-		ofParameter<int> amount;
-		ofParameter<int> size;
-		ofParameterGroup params2;
-		ofParameter<int> shapeType2;
-		ofParameter<int> amount2;
-		ofParameter<int> size2;
-		ofParameterGroup params3;
-		ofParameter<float> lineWidth3;
-		ofParameter<float> separation3;
-		ofParameter<float> speed3;
-		ofParameter<int> shapeType3;
 		
 		ofxPanel guiSource;
 		ofxPanel guiTween;

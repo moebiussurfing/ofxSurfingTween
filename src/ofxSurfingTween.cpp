@@ -781,6 +781,8 @@ void ofxSurfingTween::setupParams() {
 	params.add(solo.set("SOLO", false));
 	params.add(bReset.set("Reset", false));
 
+	params.add(animator.SHOW_Gui);
+
 	//clamp/normalize
 	//params.add(minInput.set("min Input", 0, _inputMinRange, _inputMaxRange));
 	//params.add(maxInput.set("max Input", 1, _inputMinRange, _inputMaxRange));
@@ -892,6 +894,18 @@ void ofxSurfingTween::Changed_Params(ofAbstractParameter &e)
 		bReset = false;
 		doReset();
 	}
+
+	//-
+
+	// workflow
+
+#ifdef USE_SURFING_PRESETS
+	if (name == animator.SHOW_Gui.getName() && !animator.SHOW_Gui)
+	{
+		presets.bGui = false;
+	}
+#endif
+
 }
 
 //--
@@ -969,9 +983,10 @@ void ofxSurfingTween::draw_ImGui()
 				ofxImGuiSurfing::AddBigToggle(bEnableTween, _w100, _h);
 
 
-				bool bOpen = false;
+				bool bOpen = true;
 				ImGuiTreeNodeFlags _flagt2 = (bOpen ? ImGuiTreeNodeFlags_DefaultOpen : ImGuiTreeNodeFlags_None);
 				_flagt2 |= ImGuiTreeNodeFlags_Framed;
+
 				if (ImGui::TreeNodeEx("ANIMATOR", _flagt2))
 				{
 					ofxImGuiSurfing::refreshImGui_WidgetsSizes(_w100, _w50, _w33, _w25, _h);
@@ -980,7 +995,6 @@ void ofxSurfingTween::draw_ImGui()
 
 #ifdef USE_SURFING_PRESETS
 					presets.draw_ImGui_Minimal();
-					ofxImGuiSurfing::AddToggleRoundedButton(presets.bGui);
 #endif
 					ImGui::TreePop();
 				}
@@ -991,10 +1005,13 @@ void ofxSurfingTween::draw_ImGui()
 
 				if (bEnableTween)
 				{
-					ofxImGuiSurfing::AddBigToggle(bEnableLiveMode, _w100, _h / 2);
-					ofxImGuiSurfing::AddBigToggle(bKeys, _w100, _h50);
-					ofxImGuiSurfing::AddBigToggle(bReset, _w100, _h50);
-					ImGui::Dummy(ImVec2(0.0f, 2.0f));
+					if (guiManager.bExtra) {
+						//ImGui::Dummy(ImVec2(0.0f, 2.0f));
+						ofxImGuiSurfing::AddBigToggle(bEnableLiveMode, _w100, _h / 2);
+						ofxImGuiSurfing::AddBigToggle(bKeys, _w100, _h50);
+						ofxImGuiSurfing::AddBigToggle(bReset, _w100, _h50);
+						ImGui::Dummy(ImVec2(0.0f, 2.0f));
+					}
 				}
 
 				if (bEnableTween)
@@ -1033,8 +1050,8 @@ void ofxSurfingTween::draw_ImGui()
 
 				if (bEnableTween)
 				{
-					//bOpen = false;
-					//_flagw = (bOpen ? ImGuiWindowFlags_NoCollapse : ImGuiWindowFlags_None);
+					_flagt = ImGuiTreeNodeFlags_None;
+					//_flagt = ImGuiTreeNodeFlags_DefaultOpen;
 
 					if (ImGui::CollapsingHeader("PANELS", _flagt))
 					{
@@ -1057,6 +1074,9 @@ void ofxSurfingTween::draw_ImGui()
 
 					//bOpen = false;
 					//_flagw = (bOpen ? ImGuiWindowFlags_NoCollapse : ImGuiWindowFlags_None);
+
+					_flagt = ImGuiTreeNodeFlags_None;
+					//_flagt = ImGuiTreeNodeFlags_DefaultOpen;
 
 					if (ImGui::CollapsingHeader("ENABLE PARAMETERS", _flagt))
 					{
@@ -1130,7 +1150,7 @@ void ofxSurfingTween::draw_ImGui()
 					ofxImGuiSurfing::AddToggleRoundedButton(guiManager.bExtra);
 					if (guiManager.bExtra) ofxImGuiSurfing::AddToggleRoundedButton(guiManager.bAdvanced);
 
-					ImGui::Dummy(ImVec2(0.0f, 1.0f));
+					//ImGui::Dummy(ImVec2(0.0f, 1.0f));
 					//if (ImGui::CollapsingHeader("EXTRA"))
 					if (guiManager.bExtra)
 					{
