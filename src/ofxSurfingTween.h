@@ -8,8 +8,8 @@
 TODO:
 
 + fix plotting / output when smooth disabled
-++ avoid crash to unsuported types
-++ add colors types, vectors, using templates..
++ avoid crash to unsuported types
++ add colors types, vectors, using templates..
 
 + use ofxParameterCololection
 + "real" nested sub-groups tree levels.. ?
@@ -18,6 +18,9 @@ TODO:
 
 */
 
+//--
+
+#define USE_SURFING_PRESETS
 
 #define USE_SURFING_TWEENER__GUI_MANAGER
 //#define USE_SURFING_TWEENER__GUI_LOCAL
@@ -36,6 +39,10 @@ TODO:
 #include "ofxSurfing_Timers.h"
 
 #define COLORS_MONCHROME // vs iterated hue
+
+#ifdef USE_SURFING_PRESETS
+#include "ofxSurfingPresets.h"
+#endif
 
 //----
 
@@ -97,6 +104,12 @@ public:
 
 	//----
 
+#ifdef USE_SURFING_PRESETS
+		ofxSurfingPresets presets;
+#endif
+
+	//----
+
 public:
 	ofxSurfingTween();
 	~ofxSurfingTween();
@@ -122,7 +135,7 @@ public:
 	//--------------------------------------------------------------
 	void setImGuiSharedMode(bool b) {
 #ifdef USE_SURFING_TWEENER__GUI_LOCAL
-		gui.setSharedMode(b); // Force shared context
+		gui.setImGuiSharedMode(b); // Force shared context
 #endif
 	}
 
@@ -266,12 +279,12 @@ private:
 
 public:
 	ofParameter<bool> bGui{ "SURFING TWEENER", true };
-	ofParameter<bool> enableTween;
-	ofParameter<bool> enableLiveMode;
+	ofParameter<bool> bEnableTween;
+	ofParameter<bool> bEnableLiveMode;
 
 	//--------------------------------------------------------------
 	void setLiveEditMode(bool b) {
-		enableLiveMode = b;
+		bEnableLiveMode = b;
 	}
 
 private:

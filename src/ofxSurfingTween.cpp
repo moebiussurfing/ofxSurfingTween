@@ -17,6 +17,57 @@ ofxSurfingTween::~ofxSurfingTween()
 }
 
 //--------------------------------------------------------------
+void ofxSurfingTween::setup(ofParameterGroup& aparams) {
+
+	ofLogNotice() << __FUNCTION__ << " " << aparams.getName();
+
+	setup();
+
+	//--
+
+	string n = aparams.getName();
+	mParamsGroup.setName(n);//name
+
+	//TODO:
+	//group COPY
+	mParamsGroup_COPY.setName(n + "_TWEENED");//name
+	//mParamsGroup_COPY.setName(n + suffix);//name
+
+	for (int i = 0; i < aparams.size(); i++) {
+		addParam(aparams.get(i));
+	}
+
+	//--
+
+	// already added all params content
+	// build the smoothers
+	// build the plots
+
+	setupPlots();//NUM_VARS will be counted here..
+
+	outputs.clear();
+	outputs.resize(NUM_VARS);
+
+	animator.setNameLabel("ANIMATOR");
+	animator.setup(0, 1);//we use the animators normalized and the recalculate each param range from min to max.
+	animator.setModeBrowse(false);
+
+	inputs.resize(NUM_VARS);
+
+	//--
+
+#ifdef USE_SURFING_PRESETS
+	presets.addGroup(animator.getParameters());
+#endif
+
+	//--
+
+	////TODO:
+	//mParamsGroup_COPY.setName(aparams.getName() + "_COPY");//name
+	//mParamsGroup_COPY = mParamsGroup;//this kind of copy links param per param. but we want to clone the "structure" only
+}
+
+//--------------------------------------------------------------
 void ofxSurfingTween::setup() {
 	ofLogNotice() << __FUNCTION__;
 
@@ -224,7 +275,7 @@ void ofxSurfingTween::updateSmooths() {
 
 			auto pc = mParamsGroup_COPY.getFloat(_p.getName() + suffix);
 
-			if (enableTween && _bSmooth) {
+			if (bEnableTween && _bSmooth) {
 				float v = ofMap(outputs[i].getValue(), 0, 1, _p.getMin(), _p.getMax(), true);
 				pc.set(v);
 			}
@@ -239,7 +290,7 @@ void ofxSurfingTween::updateSmooths() {
 
 			auto pc = mParamsGroup_COPY.getInt(_p.getName() + suffix);
 
-			if (enableTween && _bSmooth) {
+			if (bEnableTween && _bSmooth) {
 				int v = ofMap(outputs[i].getValue(), 0, 1, _p.getMin(), _p.getMax() + 1, true);
 				pc.set(v);
 				//TODO: round fix +1...
@@ -261,7 +312,7 @@ void ofxSurfingTween::updateSmooths() {
 
 			auto pc = mParamsGroup_COPY.getVec2f(_p.getName() + suffix);
 
-			if (enableTween && _bSmooth) {
+			if (bEnableTween && _bSmooth) {
 				float _v1 = ofMap(outputs[i].getValue(), 0, 1, _p.getMin().x, _p.getMax().x, true);
 				float _v2 = ofMap(outputs[i].getValue(), 0, 1, _p.getMin().y, _p.getMax().y, true);
 				pc.set(glm::vec2(_v1, _v2));
@@ -278,7 +329,7 @@ void ofxSurfingTween::updateSmooths() {
 
 			auto pc = mParamsGroup_COPY.getVec3f(_p.getName() + suffix);
 
-			if (enableTween && _bSmooth) {
+			if (bEnableTween && _bSmooth) {
 				float _v1 = ofMap(outputs[i].getValue(), 0, 1, _p.getMin().x, _p.getMax().x, true);
 				float _v2 = ofMap(outputs[i].getValue(), 0, 1, _p.getMin().y, _p.getMax().y, true);
 				float _v3 = ofMap(outputs[i].getValue(), 0, 1, _p.getMin().z, _p.getMax().z, true);
@@ -297,7 +348,7 @@ void ofxSurfingTween::updateSmooths() {
 
 			auto pc = mParamsGroup_COPY.getVec3f(_p.getName() + suffix);
 
-			if (enableTween && _bSmooth) {
+			if (bEnableTween && _bSmooth) {
 				float _v1 = ofMap(outputs[i].getValue(), 0, 1, _p.getMin().x, _p.getMax().x, true);
 				float _v2 = ofMap(outputs[i].getValue(), 0, 1, _p.getMin().y, _p.getMax().y, true);
 				float _v3 = ofMap(outputs[i].getValue(), 0, 1, _p.getMin().z, _p.getMax().z, true);
@@ -351,7 +402,7 @@ void ofxSurfingTween::updateEngine() {
 
 		// output
 		if (bShowPlots) {
-			if (enableTween && _bSmooth) plots[2 * i + 1]->update(outputs[i].getValue()); // filtered
+			if (bEnableTween && _bSmooth) plots[2 * i + 1]->update(outputs[i].getValue()); // filtered
 			else plots[2 * i + 1]->update(_input); // source
 		}
 
@@ -374,7 +425,7 @@ void ofxSurfingTween::updateEngine() {
 		ofParameter<bool> _bSmooth = _p.cast<bool>();
 
 		// output
-		if (enableTween && _bSmooth)
+		if (bEnableTween && _bSmooth)
 		{
 			//if (bNormalized) output = outputs[index].getValueN();
 			//else output = outputs[index].getValue();
@@ -660,12 +711,15 @@ void ofxSurfingTween::keyPressed(int key) {
 
 	//-
 
-	if (key == 'h') bShowHelp = !bShowHelp;
 	if (key == 'g') bGui = !bGui;
+	if (key == 'h') bShowHelp = !bShowHelp;
+	if (key == 'p') bShowPlots = !bShowPlots;
+
 	if (key == OF_KEY_F1 || key == OF_KEY_BACKSPACE) doRandomize(false);
 	if (key == OF_KEY_F2) doGo();
 	if (key == OF_KEY_F3 || key == ' ') doRandomize(true);
 	if (key == OF_KEY_F4) bPlay = !bPlay;
+
 	if (key == 's') solo = !solo;
 	if (key == OF_KEY_UP) {
 		index--;
@@ -715,17 +769,17 @@ void ofxSurfingTween::setupParams() {
 	params.add(bGui);
 	params.add(bKeys.set("Keys", true));
 	params.add(index.set("Index", 0, 0, 0));
-	params.add(bPlay.set("PLAY", false));
+	params.add(bPlay.set("PLAY TEST", false));
 	params.add(playSpeed.set("Speed", 0.5, 0, 1));
 	params.add(bShowPlots.set("PLOTS", true));
 	params.add(bShowInputs.set("INPUTS", true));
 	params.add(bShowOutputs.set("OUTPUTS", true));
 	params.add(bShowHelp.set("Help", false));
 	params.add(bFullScreen.set("FULL SCREEN", false));
-	params.add(enableLiveMode.set("LIVE EDIT MODE", true));
-	params.add(enableTween.set("TWEEN ENABLE", true));
+	params.add(bEnableLiveMode.set("LIVE EDIT MODE", true));
+	params.add(bEnableTween.set("TWEEN ENABLE", true));
 	params.add(solo.set("SOLO", false));
-	params.add(bReset.set("RESET", false));
+	params.add(bReset.set("Reset", false));
 
 	//clamp/normalize
 	//params.add(minInput.set("min Input", 0, _inputMinRange, _inputMaxRange));
@@ -742,7 +796,7 @@ void ofxSurfingTween::setupParams() {
 	output.setSerializable(false);
 	solo.setSerializable(false);
 	bReset.setSerializable(false);
-	enableLiveMode.setSerializable(false);
+	bEnableLiveMode.setSerializable(false);
 	bPlay.setSerializable(false);
 
 	ofAddListener(params.parameterChangedE(), this, &ofxSurfingTween::Changed_Params); // setup()
@@ -781,8 +835,8 @@ void ofxSurfingTween::exit() {
 void ofxSurfingTween::doReset() {
 	ofLogNotice(__FUNCTION__);
 
-	enableLiveMode = true;
-	enableTween = true;
+	bEnableLiveMode = true;
+	bEnableTween = true;
 	output = 0;
 	playSpeed = 0.5;
 	//bPlay = false;
@@ -812,7 +866,7 @@ void ofxSurfingTween::doReset() {
 //		ofLogVerbose() << __FUNCTION__ << " : " << name << " : with value " << e;
 //	}
 //
-//	if (enableLiveMode) {
+//	if (bEnableLiveMode) {
 //
 //	}
 //}
@@ -912,19 +966,39 @@ void ofxSurfingTween::draw_ImGui()
 				_flagt = ImGuiTreeNodeFlags_DefaultOpen;
 
 				// enable / bypass
-				ofxImGuiSurfing::AddBigToggle(enableTween, _w100, _h);
-				ofxImGuiSurfing::AddBigToggle(animator.SHOW_Gui, _w100, _h);
-				ImGui::Dummy(ImVec2(0.0f, 2.0f));
+				ofxImGuiSurfing::AddBigToggle(bEnableTween, _w100, _h);
 
-				if (enableTween)
+
+				bool bOpen = false;
+				ImGuiTreeNodeFlags _flagt2 = (bOpen ? ImGuiTreeNodeFlags_DefaultOpen : ImGuiTreeNodeFlags_None);
+				_flagt2 |= ImGuiTreeNodeFlags_Framed;
+				if (ImGui::TreeNodeEx("ANIMATOR", _flagt2))
 				{
-					ofxImGuiSurfing::AddBigToggle(enableLiveMode, _w100, _h / 2);
+					ofxImGuiSurfing::refreshImGui_WidgetsSizes(_w100, _w50, _w33, _w25, _h);
+
+					ofxImGuiSurfing::AddBigToggle(animator.SHOW_Gui, _w100, _h);
+
+
+#ifdef USE_SURFING_PRESETS
+					presets.draw_ImGui_Minimal();
+					ofxImGuiSurfing::AddToggleRoundedButton(presets.bGui);
+#endif
+					ImGui::TreePop();
+				}
+
+				//-
+
+				//ImGui::Dummy(ImVec2(0.0f, 2.0f));
+
+				if (bEnableTween)
+				{
+					ofxImGuiSurfing::AddBigToggle(bEnableLiveMode, _w100, _h / 2);
 					ofxImGuiSurfing::AddBigToggle(bKeys, _w100, _h50);
 					ofxImGuiSurfing::AddBigToggle(bReset, _w100, _h50);
 					ImGui::Dummy(ImVec2(0.0f, 2.0f));
 				}
 
-				if (enableTween)
+				if (bEnableTween)
 				{
 					if (ImGui::CollapsingHeader("ACTIONS", _flagt))
 					{
@@ -938,7 +1012,7 @@ void ofxSurfingTween::draw_ImGui()
 							doRandomize(true);
 						}
 
-						//blink by timer
+						// blink by timer
 						bool b = bPlay;
 						float a;
 						if (b) a = 1 - tn;
@@ -958,7 +1032,7 @@ void ofxSurfingTween::draw_ImGui()
 
 				//-
 
-				if (enableTween)
+				if (bEnableTween)
 				{
 					//bOpen = false;
 					//_flagw = (bOpen ? ImGuiWindowFlags_NoCollapse : ImGuiWindowFlags_None);
@@ -1055,9 +1129,13 @@ void ofxSurfingTween::draw_ImGui()
 
 					ImGui::Dummy(ImVec2(0.0f, 2.0f));
 					ofxImGuiSurfing::AddToggleRoundedButton(guiManager.bExtra);
+					if (guiManager.bExtra) ofxImGuiSurfing::AddToggleRoundedButton(guiManager.bAdvanced);
+
+					ImGui::Dummy(ImVec2(0.0f, 1.0f));
+					//if (ImGui::CollapsingHeader("EXTRA"))
 					if (guiManager.bExtra)
-						//if (ImGui::CollapsingHeader("EXTRA"))
 					{
+						//ImGui::Dummy(ImVec2(0.0f, 2.0f));
 						ofxImGuiSurfing::AddParameter(bShowHelp);
 						ofxImGuiSurfing::AddParameter(rectangle_PlotsBg.bEditMode);
 						ImGui::Dummy(ImVec2(0.0f, 2.0f));
@@ -1240,51 +1318,6 @@ void ofxSurfingTween::addParam(ofAbstractParameter& aparam) {
 }
 
 //--------------------------------------------------------------
-void ofxSurfingTween::setup(ofParameterGroup& aparams) {
-
-	ofLogNotice() << __FUNCTION__ << " " << aparams.getName();
-
-	setup();
-
-	//--
-
-	string n = aparams.getName();
-	mParamsGroup.setName(n);//name
-
-	//TODO:
-	//group COPY
-	mParamsGroup_COPY.setName(n + "_TWEENED");//name
-	//mParamsGroup_COPY.setName(n + suffix);//name
-
-	for (int i = 0; i < aparams.size(); i++) {
-		addParam(aparams.get(i));
-	}
-
-	//--
-
-	// already added all params content
-	// build the smoothers
-	// build the plots
-
-	setupPlots();//NUM_VARS will be counted here..
-
-	outputs.clear();
-	outputs.resize(NUM_VARS);
-
-	animator.setNameLabel("ANIMATOR");
-	animator.setup(0, 1);//we use the animators normalized and the recalculate each param range from min to max.
-	animator.setModeBrowse(false);
-
-	inputs.resize(NUM_VARS);
-
-	////--
-
-	////TODO:
-	//mParamsGroup_COPY.setName(aparams.getName() + "_COPY");//name
-	//mParamsGroup_COPY = mParamsGroup;//this kind of copy links param per param. but we want to clone the "structure" only
-}
-
-//--------------------------------------------------------------
 void ofxSurfingTween::add(ofParameterGroup aparams) {
 	for (int i = 0; i < aparams.size(); i++) {
 		addParam(aparams.get(i));
@@ -1327,7 +1360,7 @@ void ofxSurfingTween::Changed_Controls_Out(ofAbstractParameter &e)
 
 	ofLogVerbose(__FUNCTION__) << name << " : " << e;
 
-	if (enableLiveMode) {
+	if (bEnableLiveMode) {
 		doGo();
 	}
 }
