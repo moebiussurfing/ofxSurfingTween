@@ -17,6 +17,7 @@ Powered with the _**awesome**_ [ofxAnimatable](https://github.com/armadillu/ofxA
 - Scalable and draggable plots panel. Monitor **SOLO** of one picked parameter with full size graph.
 - Auto **Store/Recall** all the settings.
 - **ImGui** based **GUI**, docking, ready to integrate.
+- Presets engine to alternate different animation configurations.
 - Some **testing tools** like timed randomizers.
 
 ## Animator Engine
@@ -84,7 +85,9 @@ Clone these add-ons and include into the **OF PROJECT GENERATOR** to allow compi
 * [ofxAnimatable](https://github.com/moebiussurfing/ofxAnimatable)  [ FORK ] 
 * [ofxHistoryPlot](https://github.com/moebiussurfing/ofxHistoryPlot)  [ FORK ]
 * [ofxScaleDragRect](https://github.com/moebiussurfing/ofxScaleDragRect)  [ FORK ]
-* [ofxImGui](https://github.com/Daandelange/ofxImGui/tree/ofParameters-Helpers-Test)  [ FORK/BRANCH ]  
+* [ofxImGui](https://github.com/Daandelange/ofxImGui/)  [ FORK ]  
+* [ofxSurfingImGui](https://github.com/moebiussurfing/ofxSurfingImGui)  
+* [ofxSurfingPresets](https://github.com/moebiussurfing/ofxSurfingPresets)  
 * [ofxSurfingHelpers](https://github.com/moebiussurfing/ofxSurfingHelpers)  
 * [ofxWindowApp](https://github.com/moebiussurfing/ofxWindowApp)  [ Only for **example** ]  
 

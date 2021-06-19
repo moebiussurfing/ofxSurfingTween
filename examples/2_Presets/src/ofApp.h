@@ -19,11 +19,10 @@ class ofApp : public ofBaseApp{
 		ofxSurfingTween dataTween;
 
 		ofParameterGroup params;
-		ofParameter<float> sizef;
-		ofParameter<float> speedf;
+		ofParameter<float> size1;
+		ofParameter<float> rotation;
 		ofParameter<float> rotationOffset;
-		ofParameter<int> minSize;
-		ofParameter<int> shapeType;
+		ofParameter<int> size2;
 		
 		ofxPanel guiSource;
 		ofxPanel guiTween;

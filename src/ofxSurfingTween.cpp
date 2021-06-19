@@ -56,12 +56,6 @@ void ofxSurfingTween::setup(ofParameterGroup& aparams) {
 
 	//--
 
-#ifdef USE_SURFING_PRESETS
-	presets.addGroup(animator.getParameters());
-#endif
-
-	//--
-
 	////TODO:
 	//mParamsGroup_COPY.setName(aparams.getName() + "_COPY");//name
 	//mParamsGroup_COPY = mParamsGroup;//this kind of copy links param per param. but we want to clone the "structure" only
@@ -130,8 +124,10 @@ void ofxSurfingTween::startup() {
 
 	//--
 
-	//settings
+	// settings
 	ofxSurfingHelpers::loadGroup(params, path_Settings);
+
+	doGo();
 }
 
 //--------------------------------------------------------------
@@ -229,13 +225,22 @@ void ofxSurfingTween::update(ofEventArgs & args) {
 
 	// tester
 	// play timed randoms
-	static const int _secs = 2;
-	if (bPlay) {
-		int max = ofMap(playSpeed, 0, 1, 60, 5) * _secs;
-		tf = ofGetFrameNum() % max;
-		tn = ofMap(tf, 0, max, 0, 1, true);//used to fade button border
-		if (tf == 0)
+	if (bPlay)
+	{
+		//static const int _secs = 2;
+		//int max = ofMap(playSpeed, 0, 1, 60, 5) * _secs;
+		//tf = ofGetFrameNum() % max;
+		//tn = ofMap(tf, 0, max, 0, 1, true);//used to fade button border
+		//if (tf == 0)
+		//{
+		//	doRandomize(true);
+		//}
+
+		int currtime = ofGetElapsedTimeMillis() - timerPlayer;
+		tn = ofMap(currtime, 0, playTime, 0, 1, true);
+		if (currtime > playTime)
 		{
+			timerPlayer = ofGetElapsedTimeMillis();
 			doRandomize(true);
 		}
 	}
@@ -764,12 +769,13 @@ void ofxSurfingTween::setupParams() {
 
 	rectangle_PlotsBg.bEditMode.setName("Edit Plots");
 
-	//params
+	// params
 	params.setName("Surfing Tweener");
 	params.add(bGui);
 	params.add(bKeys.set("Keys", true));
 	params.add(index.set("Index", 0, 0, 0));
 	params.add(bPlay.set("PLAY TEST", false));
+	params.add(playTime.set("Time", 1000, 200, 3000));
 	params.add(playSpeed.set("Speed", 0.5, 0, 1));
 	params.add(bShowPlots.set("PLOTS", true));
 	params.add(bShowInputs.set("INPUTS", true));
@@ -783,7 +789,7 @@ void ofxSurfingTween::setupParams() {
 
 	params.add(animator.SHOW_Gui);
 
-	//clamp/normalize
+	// clamp/normalize
 	//params.add(minInput.set("min Input", 0, _inputMinRange, _inputMaxRange));
 	//params.add(maxInput.set("max Input", 1, _inputMinRange, _inputMaxRange));
 	//params.add(minOutput.set("min Output", 0, _outMinRange, _outMaxRange));
@@ -793,7 +799,7 @@ void ofxSurfingTween::setupParams() {
 	//params.add(input.set("INPUT", 0, _inputMinRange, _inputMaxRange));
 	//params.add(output.set("OUTPUT", 0, _outMinRange, _outMaxRange));
 
-	//exclude
+	// exclude
 	input.setSerializable(false);
 	output.setSerializable(false);
 	solo.setSerializable(false);
@@ -841,6 +847,7 @@ void ofxSurfingTween::doReset() {
 	bEnableTween = true;
 	output = 0;
 	playSpeed = 0.5;
+	playTime = 1000;
 	//bPlay = false;
 	//bShowPlots = true;
 	//bShowInputs = true;
@@ -894,18 +901,6 @@ void ofxSurfingTween::Changed_Params(ofAbstractParameter &e)
 		bReset = false;
 		doReset();
 	}
-
-	//-
-
-	// workflow
-
-#ifdef USE_SURFING_PRESETS
-	if (name == animator.SHOW_Gui.getName() && !animator.SHOW_Gui)
-	{
-		presets.bGui = false;
-	}
-#endif
-
 }
 
 //--
@@ -982,7 +977,6 @@ void ofxSurfingTween::draw_ImGui()
 				// enable / bypass
 				ofxImGuiSurfing::AddBigToggle(bEnableTween, _w100, _h);
 
-
 				bool bOpen = true;
 				ImGuiTreeNodeFlags _flagt2 = (bOpen ? ImGuiTreeNodeFlags_DefaultOpen : ImGuiTreeNodeFlags_None);
 				_flagt2 |= ImGuiTreeNodeFlags_Framed;
@@ -993,9 +987,6 @@ void ofxSurfingTween::draw_ImGui()
 
 					ofxImGuiSurfing::AddBigToggle(animator.SHOW_Gui, _w100, _h);
 
-#ifdef USE_SURFING_PRESETS
-					presets.draw_ImGui_Minimal();
-#endif
 					ImGui::TreePop();
 				}
 
@@ -1028,19 +1019,43 @@ void ofxSurfingTween::draw_ImGui()
 							doRandomize(true);
 						}
 
-						// blink by timer
-						bool b = bPlay;
-						float a;
-						if (b) a = 1 - tn;
-						//if (b) a = ofxSurfingHelpers::getFadeBlink();
-						else a = 1.0f;
-						if (b) ImGui::PushStyleColor(ImGuiCol_Border, (ImVec4)ImColor::HSV(0.5f, 0.0f, 1.0f, 0.5 * a));
+						//// blink by timer
+						//bool b = bPlay;
+						//float a;
+						//if (b) a = 1 - tn;
+						////if (b) a = ofxSurfingHelpers::getFadeBlink();
+						//else a = 1.0f;
+						//if (b) ImGui::PushStyleColor(ImGuiCol_Border, (ImVec4)ImColor::HSV(0.5f, 0.0f, 1.0f, 0.5 * a));
+						//ofxImGuiSurfing::AddBigToggle(bPlay, _w100, _h / 2, false);
+						//if (b) ImGui::PopStyleColor();
+
 						ofxImGuiSurfing::AddBigToggle(bPlay, _w100, _h / 2, false);
-						if (b) ImGui::PopStyleColor();
+
 						if (bPlay) {
-							ofxImGuiSurfing::AddParameter(playSpeed);
+
+							//--
+
+							// draw progress bar timer
+							{
+								ImGuiStyle *style = &ImGui::GetStyle();
+								ImGui::PushID("prog");
+								const ImVec4 color = style->Colors[ImGuiCol_ButtonHovered];//we can force change this color on theme... only used here
+								ImGui::PushStyleColor(ImGuiCol_PlotHistogram, color);
+								ImGui::ProgressBar(tn);
+								ImGui::PopStyleColor();
+								ImGui::PopID();
+							}
+
+							//--
+
+							//TODO:
+							// add bpm
+							ofxImGuiSurfing::AddParameter(playTime);
+							//ofxImGuiSurfing::AddParameter(playSpeed);
 							//ImGui::SliderFloat("Speed", &playSpeed, 0, 1);
 							//ImGui::ProgressBar(tn);
+
+
 						}
 					}
 					ImGui::Dummy(ImVec2(0.0f, 2.0f));

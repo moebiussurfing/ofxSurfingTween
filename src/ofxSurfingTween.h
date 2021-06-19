@@ -20,8 +20,6 @@ TODO:
 
 //--
 
-#define USE_SURFING_PRESETS
-
 #define USE_SURFING_TWEENER__GUI_MANAGER
 //#define USE_SURFING_TWEENER__GUI_LOCAL
 
@@ -39,10 +37,6 @@ TODO:
 #include "ofxSurfing_Timers.h"
 
 #define COLORS_MONCHROME // vs iterated hue
-
-#ifdef USE_SURFING_PRESETS
-#include "ofxSurfingPresets.h"
-#endif
 
 //----
 
@@ -104,12 +98,6 @@ public:
 
 	//----
 
-#ifdef USE_SURFING_PRESETS
-		ofxSurfingPresets presets;
-#endif
-
-	//----
-
 public:
 	ofxSurfingTween();
 	~ofxSurfingTween();
@@ -124,7 +112,7 @@ private:
 	void doEnableAll();
 
 public:
-	// required to set to false when only one ImGui instance is created
+	// required to set to false when only one ImGui instance is created. By default is setted to ImGui multi instances
 	//--------------------------------------------------------------
 	void setImGuiAutodraw(bool b) {
 #ifdef USE_SURFING_TWEENER__GUI_LOCAL
@@ -259,6 +247,9 @@ private:
 	ofParameter<bool> bReset;
 	ofParameter<bool> bPlay;
 	ofParameter<float> playSpeed;
+	ofParameter<int> playTime;
+
+	uint64_t timerPlayer;
 
 	//clamp normalize
 	//ofParameter<bool> bClamp;
