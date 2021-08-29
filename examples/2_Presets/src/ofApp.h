@@ -18,6 +18,7 @@ class ofApp : public ofBaseApp{
 
 		ofxSurfingTween dataTween;
 
+		// scene params
 		ofParameterGroup params;
 		ofParameter<float> size1;
 		ofParameter<float> rotation;
