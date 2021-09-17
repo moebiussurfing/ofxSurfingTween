@@ -68,8 +68,7 @@ void ofxSurfingTween::setup() {
 	path_Global = "ofxSurfingTween/";
 	path_Settings = path_Global + "ofxSurfingTween_Settings.xml";
 	ofxSurfingHelpers::CheckFolder(path_Global);
-
-
+	
 	// default plots position
 	//ofRectangle r = ofGetCurrentViewport();
 	int w = 300;
